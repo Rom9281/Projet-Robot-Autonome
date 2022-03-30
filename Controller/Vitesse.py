@@ -1,6 +1,6 @@
 import enum
 
 class Vitesse(enum):
-    lente = 1
-    moyenne = 2
-    rapide = 3
+    lente = 3
+    moyenne = 6
+    rapide = 9

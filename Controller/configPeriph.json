@@ -1,0 +1,8 @@
+{
+    "Serializer":
+    {
+        "Baud":19200,
+        "Pin":"/dev/ttyUSB0"
+    }
+        
+}
