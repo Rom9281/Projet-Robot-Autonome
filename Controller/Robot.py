@@ -11,9 +11,15 @@ Description :  Modélisation du robot en entier
 
 import sys, json
 from setuptools import Command
-import Vitesse, Commande
 
-sys.path.append( '../Model' )
+sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
+sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
+sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
+
+print(sys.path)
+
+from Controller.Vitesse import Vitesse
+from Controller.Commande import Commande
 
 import Model.Serializer as Serializer
 
