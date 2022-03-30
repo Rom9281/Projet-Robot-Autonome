@@ -1,6 +1,6 @@
-import enum
+from enum import Enum
 
-class Vitesse(enum):
-    lente = 3
-    moyenne = 6
-    rapide = 9
+class Vitesse(Enum):
+    LENTE = 3
+    MOYENNE = 6
+    RAPIDE = 9

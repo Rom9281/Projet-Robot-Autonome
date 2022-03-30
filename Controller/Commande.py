@@ -1,5 +1,5 @@
-import enum
+from enum import Enum
 
-class Commande(enum):
-    avancer = 1
-    tourner = 2 
+class Commande(Enum):
+    AVANCER = 1
+    TOURNER = 2 

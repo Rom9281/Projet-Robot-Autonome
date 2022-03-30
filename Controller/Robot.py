@@ -12,10 +12,6 @@ Description :  Modélisation du robot en entier
 import sys, json
 from setuptools import Command
 
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
-
 print(sys.path)
 
 from Controller.Vitesse import Vitesse
@@ -25,9 +21,11 @@ import Model.Serializer as Serializer
 
 class Robot():
     def __init__(self):
-        self.__vitesse = Vitesse['moyenne'] # Definit la vitesse initiale comme lente
+        self.__config_periph_path = r"C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller\configPeriph.json"
+        
+        self.__vitesse = Vitesse.MOYENNE # Definit la vitesse initiale comme lente
 
-        self.__config_periph = json.load(open("configPeriph.json")) # récupère la config des periphériques dans le json
+        self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
 
         self.__serializer = Serializer(
             self.__config_periph["Pin"],
@@ -40,7 +38,7 @@ class Robot():
     def moveForward(self,distance):
         self.__serializer.actionner(
             {
-                "commande":Commande['avancer'],
+                "commande":Commande.AVANCER,
                 "param": {
                     "vitesse":self.__vitesse,
                     "distance":distance

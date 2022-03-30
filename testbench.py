@@ -1,8 +1,10 @@
 import sys
 
-sys.path.append( '../Model' )
+sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
+sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
+sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
 
-import Controller.Robot as Robot
+from Controller.Robot import Robot
 
 robot = Robot()
 
