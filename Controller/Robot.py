@@ -12,8 +12,6 @@ Description :  Modélisation du robot en entier
 import sys, json
 from setuptools import Command
 
-print(sys.path)
-
 from Controller.Vitesse import Vitesse
 from Controller.Commande import Commande
 
@@ -21,15 +19,15 @@ import Model.Serializer as Serializer
 
 class Robot():
     def __init__(self):
-        self.__config_periph_path = r"C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller\configPeriph.json"
+        self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
         
-        self.__vitesse = Vitesse.MOYENNE # Definit la vitesse initiale comme lente
+        self.__vitesse = Vitesse.RAPIDE # Definit la vitesse initiale comme lente
 
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
 
-        self.__serializer = Serializer(
-            self.__config_periph["Pin"],
-            self.__config_periph["Baud"]) # Configure le Serializer comme voulut
+        self.__serializer = Serializer.Serializer(
+            self.__config_periph["Serializer"]["Pin"],
+            self.__config_periph["Serializer"]["Baud"]) # Configure le Serializer comme voulut
         
     """"
     Prend une distance en metre et envois la commande au Serializer

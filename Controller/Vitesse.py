@@ -1,6 +1,6 @@
 from enum import Enum
 
 class Vitesse(Enum):
-    LENTE = 3
-    MOYENNE = 6
-    RAPIDE = 9
+    LENTE = 1
+    MOYENNE = 2
+    RAPIDE = 3
