@@ -9,18 +9,23 @@ from Controller.Robot import Robot
 
 robot = Robot()
 
-
-
+"""
 robot.moveForward(10)
 
+robot.turn(90,1)
+"""
+
+angle = 120
+
+distance = 11.832*angle + 140.41
+
+
+ser = serial.Serial("/dev/ttyACM0",19200)
+print(ser.)
 
 """
-distance = 15000
-
-ser = serial.Serial("/dev/ttyUSB0",19200)
-
-writ = "digo 1:%s:25 2:%s:25\r" % (distance,distance)
-
+#writ = "digo 1:%s:25 2:%s:\r" % (distance,-distance)
+writ = "digo 1:%s:25 2:0:0\r" % (distance)
 print("Distance = %s"%(distance))
 print(ser.write(writ.encode()))
 """

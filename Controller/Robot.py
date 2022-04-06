@@ -12,10 +12,10 @@ Description :  Modélisation du robot en entier
 import sys, json
 from setuptools import Command
 
-from Controller.Vitesse import Vitesse
-from Controller.Commande import Commande
+from Controller.Enums import Vitesse, Commande,Sens
 
-import Model.Serializer as Serializer
+from Model.Serializer import Serializer
+from Model.STM import STM
 
 class Robot():
     def __init__(self):
@@ -25,10 +25,14 @@ class Robot():
 
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
 
-        self.__serializer = Serializer.Serializer(
+        self.__serializer = Serializer(
             self.__config_periph["Serializer"]["Pin"],
             self.__config_periph["Serializer"]["Baud"]) # Configure le Serializer comme voulut
-        
+
+        self.__stm = STM(
+            self.__config_periph["STM"]["Pin"],
+            self.__config_periph["STM"]["Baud"])
+            
     """"
     Prend une distance en metre et envois la commande au Serializer
     NOTE : Distance en cm, vitesse comme décrite dans le enum vitesse
@@ -43,5 +47,23 @@ class Robot():
                 }
             }
         )
+    
+    """
+    @PARAM:
+     - coté : enum Sens
+     - Angle en degré
+    """
+    def turn(self,sens,angle):
+        self.__serializer.actionner(
+            {
+                "commande":Commande.TOURNER,
+                "param": {
+                    "vitesse":self.__vitesse,
+                    "angle":angle,
+                    "sens":sens,
+                }
+            }
+        )
+        
         
     
