@@ -30,8 +30,8 @@ class Robot():
             self.__config_periph["Serializer"]["Baud"]) # Configure le Serializer comme voulut
 
         self.__stm = STM(
-            self.__config_periph["STM"]["Pin"],
-            self.__config_periph["STM"]["Baud"])
+            self.__config_periph["STM32"]["Pin"],
+            self.__config_periph["STM32"]["Baud"])
             
     """"
     Prend une distance en metre et envois la commande au Serializer
