@@ -1,6 +1,7 @@
+from Peripherique import Peripherique
 from abc import ABC, abstractmethod
 
-class Capteur(ABC):
+class Capteur(Peripherique):
     
     @abstractmethod
     def recupererMesure(self):
