@@ -2,7 +2,7 @@ import sys
 import serial
 import matplotlib.pyplot as plt
 import numpy as np
-import random, math
+import random, math, time
 
 sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
 sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
@@ -24,7 +24,7 @@ def polarToCartesian(data):
         Theta.append(coord[0])
         R.append(coord[1])
     
-    return X,Y
+    return X,Y,Theta,R
 
 def cleanData(data,min_quality):
     clean_data = []
@@ -35,6 +35,13 @@ def cleanData(data,min_quality):
             clean_data.append((coord[1],coord[2]))
     
     return clean_data
+
+def reax(ax):
+    ax.grid(True)
+    ax.spines['left'].set_position('zero')
+    ax.spines['right'].set_color('none')
+    ax.spines['bottom'].set_position('zero')
+    ax.spines['top'].set_color('none')
 
 """
 robot = Robot()
@@ -54,27 +61,54 @@ print(info)
 health = lidar.get_health()
 print(health)
 
-data = []
+
+# Pyplot interactive mode : 
+plt.ion()
+
+fig = plt.figure()
+ax1 = fig.add_subplot(211)
+
+ax2 = fig.add_subplot(212)
+
 
 for i, scan in enumerate(lidar.iter_scans()):
-    print('%d: Got %d measurments' % (i, len(scan)))
-    data.extend(scan)
-    if i > 100:
+    #print('%d: Got %d measurments' % (i, len(scan)))
+
+    if(len(scan)>200):
+        data = cleanData(scan,13)
+        X,Y,Theta,R = polarToCartesian(data)
+
+        ax1.clear()
+        ax2.clear()
+
+        reax(ax1)
+
+        ax1.plot(X, Y, 'b-')
+        ax2.plot(Theta, R, 'r-')
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+        #time.sleep(0.4)
+    
+    
+    """
+    if i > 10:
         break
+    """
+    
 
 lidar.stop()
 lidar.stop_motor()
 lidar.disconnect()
 
-data = cleanData(data,8)
-
-print(data)
+"""
+data = cleanData(data,13)
 
 X,Y = polarToCartesian(data)
 
+
 plt.plot(X, Y)
 plt.show()
-
+"""
 
 
 """
