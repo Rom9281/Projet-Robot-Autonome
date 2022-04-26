@@ -1,13 +1,28 @@
-from Model.Actionneur import Actionneur
+#from Model.Actionneur import Actionneur
+#from Controller.Enums import Vitesse, Commande,Sens
 
-from Controller.Enums import Vitesse, Commande,Sens
+from Model.ActionneurCarte import ActionneurCarte
 
-class Serializer(Actionneur):
+class Serializer(ActionneurCarte):
     
-    def __init__(self,pin,baude_rate):
-        super().__init__(pin,baude_rate)
+    def __init__(self,carte):
+        # super().__init__(pin,baude_rate)
+        super().__init__(carte,"PSTSRV","0","90")
+        self.mouvementHorizontal(90)
+    
+    def mouvementHorizontal(self,angle):
+        self._arg1 = "0"
+        self._arg2 = str(angle)
+        self._carte.ecrireCommand(self._creerCommande())
+    
+    def mouvementHorizontal(self,angle):
+        self._arg1 = "0"
+        self._arg2 = str(angle)
+        self._carte.ecrireCommand(self._creerCommande())
 
     """
+    CODE SI LE SERIALISER EST BRANCHE DIRECTEMENT AU RASPBERRY
+    
     A besoin de savoir:
     {
         commande: "nom commande"
@@ -16,7 +31,7 @@ class Serializer(Actionneur):
         ]
         
     }
-    """
+    
     def actionner(self,commande):
         if self._serial:
             print("[$] Commande : %s" % (commande["commande"]))
@@ -35,9 +50,9 @@ class Serializer(Actionneur):
 
         self.__sendCommand(str_command)
     
-    """
+    
     Faire tourner les roues du robot
-    """
+    
     def __tourner(self,param):
 
         vitesse = self.__getSpeed(param["vitesse"])
@@ -50,10 +65,10 @@ class Serializer(Actionneur):
 
         self.__sendCommand(str_command)
     
-    """
+    
     @PARAM : Vitesse sous forme d'enum dans controller
     @RET : vitesse sous forme de int
-    """
+    
     def __getSpeed(self,vitesse):
         ret = 0
 
@@ -68,9 +83,8 @@ class Serializer(Actionneur):
         
         return ret
 
-
-
     def __sendCommand(self,str_command):
         print("[$] Sending command")
         res = self._serial.write(str_command.encode(encoding='UTF-8',errors='strict'))
         print("[$] Result : %s"%(res))
+    """
