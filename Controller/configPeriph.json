@@ -1,5 +1,5 @@
 {
-    "Serializer":
+    "Lidar":
     {
         "Baud":19200,
         "Pin":"/dev/ttyUSB0"

@@ -11,6 +11,9 @@ sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\
 from Controller.Robot import Robot
 from rplidar import RPLidar
 
+robot = Robot()
+
+"""
 def polarToCartesian(data):
     X = []
     Y = []
@@ -43,15 +46,8 @@ def reax(ax):
     ax.spines['bottom'].set_position('zero')
     ax.spines['top'].set_color('none')
 
-"""
-robot = Robot()
-
-robot.moveForward(10)
-
-robot.turn(90,1)
-"""
-
-# ser = serial.Serial("/dev/ttyUSB0",19200)
+#robot.moveForward(10)
+# robot.turn(90,1)
 
 lidar = RPLidar('/dev/ttyUSB0')
 
@@ -61,13 +57,10 @@ print(info)
 health = lidar.get_health()
 print(health)
 
-
 # Pyplot interactive mode : 
 plt.ion()
-
 fig = plt.figure()
 ax1 = fig.add_subplot(211)
-
 ax2 = fig.add_subplot(212)
 
 
@@ -88,30 +81,20 @@ for i, scan in enumerate(lidar.iter_scans()):
         fig.canvas.draw()
         fig.canvas.flush_events()
         #time.sleep(0.4)
-    
-    
-    """
-    if i > 10:
-        break
-    """
-    
 
 lidar.stop()
 lidar.stop_motor()
 lidar.disconnect()
 
-"""
 data = cleanData(data,13)
 
 X,Y = polarToCartesian(data)
 
-
 plt.plot(X, Y)
 plt.show()
-"""
 
-
-"""
+---------------------------------------------------------
+ser = serial.Serial("/dev/ttyUSB0",19200)
 angle = 120
 distance = 11.832*angle + 140.41
 #writ = "digo 1:%s:25 2:%s:\r" % (distance,-distance)
