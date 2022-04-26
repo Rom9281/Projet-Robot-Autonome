@@ -1,10 +1,9 @@
-from Model.Actionneur import Actionneur
-from Controller.Commande import Commande
-from Controller.Vitesse import Vitesse
+from Model.Carte import Carte
 
-class STM(Actionneur):
+class STM(Carte):
     def __init__(self,pin,baude_rate):
         super().__init__(pin,baude_rate)
+    
     
 
     

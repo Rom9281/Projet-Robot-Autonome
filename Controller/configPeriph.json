@@ -1,13 +1,14 @@
 {
-    "Serializer":
+    "Lidar":
     {
         "Baud":19200,
         "Pin":"/dev/ttyUSB0"
     },
+    
     "STM32":
     {
         "Baud":19200,
-        "Pin":"/dev/ttyUSB0"
+        "Pin":"/dev/ttyACM0"
     }
         
 }

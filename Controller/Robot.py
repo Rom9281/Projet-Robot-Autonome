@@ -19,3 +19,10 @@ class Robot():
         self.__corps = CorpsRobot()
         self.__intelligence = IntelligenceRobot()
         
+
+
+    
+            
+    
+        
+    

@@ -1,6 +1,6 @@
 from Model.Actionneur import Actionneur
-from Controller.Commande import Commande
-from Controller.Vitesse import Vitesse
+
+from Controller.Enums import Vitesse, Commande,Sens
 
 class Serializer(Actionneur):
     
@@ -32,15 +32,23 @@ class Serializer(Actionneur):
 
         str_command = "digo 1:%s:%s" %(distance,vitesse)
         str_command += " 2:%s:%s\r" %(distance,vitesse)
+
         self.__sendCommand(str_command)
     
+    """
+    Faire tourner les roues du robot
+    """
     def __tourner(self,param):
-        angle = param["angle"]
-        """
-        str_command = "digo 1:%s:%s" %(distance,vitesse)
-        str_command += " 2:%s:%s\r" %(distance,vitesse)
+
+        vitesse = self.__getSpeed(param["vitesse"])
+        angle = 11,832*param["angle"] + 140,41
+
+        if(param["sens"]==Sens.GAUCHE):
+            str_command = "digo 1:%s:%s 2:0:0\r" %(angle,vitesse)
+        else:
+            str_command = "digo 1:0:0 2:%s:%s\r" %(angle,vitesse)
+
         self.__sendCommand(str_command)
-        """
     
     """
     @PARAM : Vitesse sous forme d'enum dans controller
@@ -51,8 +59,10 @@ class Serializer(Actionneur):
 
         if(vitesse==Vitesse.LENTE):
             ret=5
+
         elif(vitesse==Vitesse.MOYENNE):
             ret=15
+
         elif(vitesse==Vitesse.RAPIDE):
             ret=25
         
