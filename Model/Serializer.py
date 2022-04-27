@@ -7,17 +7,39 @@ class Serializer(ActionneurCarte):
     
     def __init__(self,carte):
         # super().__init__(pin,baude_rate)
-        super().__init__(carte,"PSTSRV","0","90")
-        self.mouvementHorizontal(90)
+        super().__init__(carte,"MVTMTR","0","0")
+
     
-    def mouvementHorizontal(self,angle):
-        self._arg1 = "0"
-        self._arg2 = str(angle)
+    def avancer(self,distance):
+
+        self._commande = "MVTMTR"
+        self._arg1 = "1"
+        self._arg2 = str(distance)
+
         self._carte.ecrireCommand(self._creerCommande())
     
-    def mouvementHorizontal(self,angle):
-        self._arg1 = "0"
+    def reculer(self,distance):
+
+        self._commande = "MVTMTR"
+        self._arg1 = "3"
+        self._arg2 = str(distance)
+
+        self._carte.ecrireCommand(self._creerCommande())
+    
+    def tournerDroite(self,angle):
+
+        self._commande = "MVTMTR"
+        self._arg1 = "2"
         self._arg2 = str(angle)
+
+        self._carte.ecrireCommand(self._creerCommande())
+    
+    def tournerGauche(self,angle):
+    
+        self._commande = "MVTMTR"
+        self._arg1 = "4"
+        self._arg2 = str(angle)
+
         self._carte.ecrireCommand(self._creerCommande())
 
     """

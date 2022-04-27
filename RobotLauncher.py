@@ -15,14 +15,13 @@ q_info = mp.Queue() # queue contenant les informations
 
 corps = CorpsRobot(q_com,q_info)
 intel = IntelligenceRobot(q_com,q_info)
-robot = Robot(corps,intel)
 
-print("PID CORPS : ")
-
-robot.start()
 corps.start()
 intel.start()
-print("PID")
+
+robot = Robot(corps.pid,intel.pid)
+robot.start()
+
+robot.join()
 intel.join()
 corps.join()
-robot.join()

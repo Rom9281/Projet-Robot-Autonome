@@ -14,6 +14,6 @@ class IntelligenceRobot(Process):
     def run(self):
         while self.__flag:
             time.sleep(1)
-            print("[$] %s:%s : Intelligence active"%(os.getppid(),os.getpid()))
+            # print("[$] %s:%s : Intelligence active"%(os.getppid(),os.getpid()))
         
 

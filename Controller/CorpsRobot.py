@@ -19,7 +19,7 @@ from Controller.Enums import Vitesse, Commande,Sens
 from Model.STM import STM
 from Model.Lidar import Lidar
 from Model.ServoMoteur import ServoMoteur
-import Model.Serializer as Serializer
+from Model.Serializer import Serializer
 
 class CorpsRobot(Process):
     
@@ -53,11 +53,16 @@ class CorpsRobot(Process):
         )
 
         self.__servo_moteur = ServoMoteur(self.__stm)
+        self.__serializer = Serializer(self.__stm)
     
     def run(self):
+
+        self.__serializer.avancer(10)
+        self.__servo_moteur.mouvementHorizontal(90)
+
         while self.__flag:
             time.sleep(1)
-            print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
+            # print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
     
     """"
     Prend une distance en metre et envois la commande au Serializer
