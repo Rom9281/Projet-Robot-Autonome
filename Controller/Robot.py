@@ -19,34 +19,21 @@ from Controller.CorpsRobot import CorpsRobot
 from Controller.IntelligenceRobot import IntelligenceRobot
 
 class Robot(Process):
-    def __init__(self):
+    def __init__(self,corps,intel):
 
         super(Robot, self).__init__()
 
         # Process related
-        self.q_com = mp.Queue() # queue contenant les commandes
-        self.q_info = mp.Queue() # queue contenant les informations
         self.__flag = True
 
-
-
-        self.__corps = CorpsRobot(self.q_com,self.q_info)
+        self.__corps = corps
         print("[$] Corps generé")
-        self.__intel = IntelligenceRobot(self.q_com,self.q_info)
+        self.__intel = intel
         print("[$] Intelligence generé")
 
         print("[$] Process prêt")
 
     def run(self):
-        self.__corps.start()
-        self.__intel.start()
-
-        self.__task()
-
-        self.__intel.join()
-        self.__corps.join()
-    
-    def __task(self):
         while self.__flag:
             time.sleep(1)
             print("[$] %s:%s Robot actif"%(os.getppid(),os.getpid()))
