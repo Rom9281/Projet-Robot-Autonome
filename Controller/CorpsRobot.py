@@ -9,8 +9,7 @@ Contributeur :
 Description :  Modélisation du robot en entier
 """
 
-import sys, json, time,os
-from setuptools import Command
+import json, time,signal,os
 from multiprocessing import Process
 
 from Controller.Enums import Vitesse, Commande,Sens
@@ -31,17 +30,12 @@ class CorpsRobot(Process):
         self.__q_com = q_com
         self.__q_info = q_info
         self.__flag = True
+        signal.signal(signal.SIGTERM, self.__signal_handler)
 
         # Configuration des peripheriques direct
         self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
         self.__vitesse = Vitesse.RAPIDE # Definit la vitesse initiale comme lente
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
-
-        """
-        self.__serializer = Serializer(
-            self.__config_periph["Serializer"]["Pin"],
-            self.__config_periph["Serializer"]["Baud"]) # Configure le Serializer comme voulut
-        """
 
         self.__stm = STM(
             self.__config_periph["STM32"]["Pin"],
@@ -54,16 +48,30 @@ class CorpsRobot(Process):
 
         self.__servo_moteur = ServoMoteur(self.__stm)
         self.__serializer = Serializer(self.__stm)
+
+        """
+        self.__serializer = Serializer(
+            self.__config_periph["Serializer"]["Pin"],
+            self.__config_periph["Serializer"]["Baud"]) # Configure le Serializer comme voulut
+        """
     
     def run(self):
-
-        self.__serializer.avancer(10)
-        self.__servo_moteur.mouvementHorizontal(90)
-
+        print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
         while self.__flag:
+            self.__serializer.avancer(10)
+            self.__servo_moteur.mouvementHorizontal(90)
             time.sleep(1)
-            # print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
+            
     
+    def __signal_handler(self,signum, frame):
+        print("[*] Process Corps est arrêté")
+        self.__flag = False
+    
+
+
+
+
+
     """"
     Prend une distance en metre et envois la commande au Serializer
     NOTE : Distance en cm, vitesse comme décrite dans le enum vitesse

@@ -6,6 +6,8 @@ import numpy as np,math
 class Lidar(CapteurPeriph):
     def __init__(self, pin, baude_rate):
         super().__init__(pin, baude_rate)
+        
+        """
         if(self._serial):
             print(self._getInfo())
             flag =True
@@ -15,6 +17,7 @@ class Lidar(CapteurPeriph):
                     self.displayIHM()
                 except:
                     print("[$] Error, retrying")
+        """
 
     
     def _connect(self):
