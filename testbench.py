@@ -11,7 +11,7 @@ sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\
 from Controller.CorpsRobot import CorpsRobot
 from rplidar import RPLidar
 
-robot = CorpsRobot()
+corps_robot = CorpsRobot()
 
 """
 def polarToCartesian(data):

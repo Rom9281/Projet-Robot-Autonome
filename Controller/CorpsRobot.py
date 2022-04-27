@@ -9,8 +9,9 @@ Contributeur :
 Description :  Modélisation du robot en entier
 """
 
-import sys, json
+import sys, json, time,os
 from setuptools import Command
+from multiprocessing import Process
 
 from Controller.Enums import Vitesse, Commande,Sens
 
@@ -18,16 +19,22 @@ from Controller.Enums import Vitesse, Commande,Sens
 from Model.STM import STM
 from Model.Lidar import Lidar
 from Model.ServoMoteur import ServoMoteur
-
 import Model.Serializer as Serializer
 
-class CorpsRobot():
+class CorpsRobot(Process):
     
-    def __init__(self):
-        self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
-        
-        self.__vitesse = Vitesse.RAPIDE # Definit la vitesse initiale comme lente
+    def __init__(self,q_com,q_info):
 
+        super(CorpsRobot, self).__init__()
+
+        # Multiprocessing
+        self.__q_com = q_com
+        self.__q_info = q_info
+        self.__flag = True
+
+        # Configuration des peripheriques direct
+        self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
+        self.__vitesse = Vitesse.RAPIDE # Definit la vitesse initiale comme lente
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
 
         """
@@ -46,6 +53,11 @@ class CorpsRobot():
         )
 
         self.__servo_moteur = ServoMoteur(self.__stm)
+    
+    def run(self):
+        while self.__flag:
+            time.sleep(1)
+            print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
     
     """"
     Prend une distance en metre et envois la commande au Serializer
