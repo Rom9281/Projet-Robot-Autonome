@@ -34,7 +34,8 @@ class Robot(Process):
     def run(self):
         while self.__flag:
             #print("[$] %s:%s Robot actif"%(os.getppid(),os.getpid()))
-
+            pass
+            """
             try:
                 commande = input("[?] Commande : ")
 
@@ -44,7 +45,8 @@ class Robot(Process):
                     self.terminate()
             
             except:
-                print("")
+                print("Error")
+            """
         
 
     

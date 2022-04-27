@@ -1,4 +1,4 @@
-import multiprocessing as mp
+import multiprocessing as mp,signal,os
 
 import sys
 sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
@@ -21,6 +21,13 @@ intel.start()
 
 robot = Robot(corps.pid,intel.pid)
 robot.start()
+
+while True:
+    commande = input("[?] Commande : ")
+    if(commande == "off"):
+        os.kill(corps.pid, signal.SIGTERM)
+        os.kill(intel.pid, signal.SIGTERM)
+
 
 robot.join()
 intel.join()
