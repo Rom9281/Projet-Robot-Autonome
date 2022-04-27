@@ -36,6 +36,6 @@ def obstacle_droite (m) :
 
 lidar = RPLidar('/dev/ttyUSB0')
 for i, scan in enumerate(lidar.iter_scans()):
-    print(scan)
+    print(obstacle_avant(scan))
 
 
