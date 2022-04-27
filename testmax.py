@@ -1,3 +1,5 @@
+from rplidar import RPLidar
+
 def obstacle_avant (m) : 
     ret = False
     for t in m:
@@ -31,5 +33,9 @@ def obstacle_droite (m) :
                 if t[2]<= 55:
                     ret = True
     return ret
+
+lidar = RPLidar('/dev/ttyUSB0')
+for i, scan in enumerate(lidar.iter_scans()):
+    print(scan)
 
 
