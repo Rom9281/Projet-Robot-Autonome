@@ -10,13 +10,12 @@ class ActionneurCarte(Actionneur):
         self._len_chiffre = 10;
 
         
-
     def _creerCommande(self):
         ret = self._commande+":"
-        ret += "0"*(self._len_chiffre-len(list(self._arg1)))
+        #ret += "0"*(self._len_chiffre-len(list(self._arg1)))
         ret += self._arg1+":"
-        ret += "0"*(self._len_chiffre-len(list(self._arg2)))
-        ret += self._arg2+";"
+        #ret += "0"*(self._len_chiffre-len(list(self._arg2)))
+        ret += self._arg2+"\n"
 
         return ret
     

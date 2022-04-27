@@ -24,7 +24,7 @@ print("[*] Intel PID %s"%(intel.pid))
 
 #robot = Robot(corps.pid,intel.pid)
 #robot.start()
-
+"""
 time.sleep(1)
 
 while flag:
@@ -37,7 +37,7 @@ while flag:
         os.kill(intel.pid, signal.SIGTERM)
         
 
-
+"""
 # robot.join()
 intel.join()
 corps.join()

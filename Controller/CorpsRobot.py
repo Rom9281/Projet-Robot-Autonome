@@ -60,7 +60,7 @@ class CorpsRobot(Process):
         while self.__flag:
             self.__serializer.avancer(10)
             self.__servo_moteur.mouvementHorizontal(90)
-            time.sleep(1)
+            time.sleep(2)
             
     
     def __signal_handler(self,signum, frame):
