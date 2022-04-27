@@ -8,10 +8,8 @@ sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\
 sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
 sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
 
-from Controller.CorpsRobot import CorpsRobot
+from Controller.Robot import Robot
 from rplidar import RPLidar
-
-corps_robot = CorpsRobot()
 
 """
 def polarToCartesian(data):

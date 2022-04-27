@@ -8,13 +8,14 @@ class Carte(Peripherique):
     
     def ecrireCommand(self,command):
         ret = False
-
-        print("[$] Sending command")
-
-        if(self._serial.write(command.encode(encoding='UTF-8',errors='strict'))):
-            ret=True
+        if(self._serial):
+            if(self._serial.write(command.encode(encoding='UTF-8',errors='strict'))):
+                ret=True
+            else:
+                print("[$] %s : Commande non envoyé"%(self.__class__.__name__))
+        
         else:
-            print("[$] Error")
+            print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
 
         return ret
 
