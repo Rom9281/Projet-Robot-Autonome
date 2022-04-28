@@ -84,6 +84,9 @@ def orientation(p):
         orientation_actuelle = 3
     else :
          orientation_actuelle += p
+
+    # possibilite de remplacer tout les if par:
+    # orientation_actuelle = (orientation_actuell + p) % 4
     return
 
 def premier_tour():

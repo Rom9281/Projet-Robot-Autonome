@@ -40,4 +40,7 @@ mogo motorId:vel [motorId:vel]
 - - Arg2: angle, valeure comprise entre 0° et 180°
 
 - TIRLMP: actionner le tir de la Lampe LED
-  
+
+
+
+lien video youtube lidar https://www.youtube.com/watch?v=W21KHgFzCCI 
