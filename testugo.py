@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ##Nettoyage
-cv2. destroyAllWindows()
+cv2.destroyAllWindows()
 
 ##Fonctions
 def matrice_couleur(image,k):
