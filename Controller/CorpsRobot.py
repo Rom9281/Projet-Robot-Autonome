@@ -19,6 +19,7 @@ from Model.STM import STM
 from Model.Lidar import Lidar
 from Model.ServoMoteur import ServoMoteur
 from Model.Serializer import Serializer
+from Model.LED import LED
 
 class CorpsRobot(Process):
     
@@ -48,6 +49,7 @@ class CorpsRobot(Process):
 
         self.__servo_moteur = ServoMoteur(self.__stm)
         self.__serializer = Serializer(self.__stm)
+        self.__led = LED(self.__stm)
 
 
         """
@@ -90,6 +92,10 @@ class CorpsRobot(Process):
         
         elif(commande[0] == "X"):
             self.__servo_moteur.mouvementHorizontal(commande[1])
+        
+        elif(commande[0] == "T"):
+            self.__led.tirer()
+
             
     
     def signal_handler(self,signum,frame):

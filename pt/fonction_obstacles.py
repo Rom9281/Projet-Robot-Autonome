@@ -1,6 +1,6 @@
 def obstacle_avant (message) : 
     qualite_min = 8
-    distance_min = 15
+    distance_min = 150
     ret = False
     for tuple in message:
         if tuple[0]>=qualite_min:
@@ -12,8 +12,8 @@ def obstacle_avant (message) :
 
 def obstacle_droite (message) :
     qualite_min = 8
-    distance_min_1 = 30
-    distance_min_2 = 55
+    distance_min_1 = 300
+    distance_min_2 = 550
     ret = False
     for t in message:
         if t[0]>=qualite_min:
@@ -28,8 +28,8 @@ def obstacle_droite (message) :
 
 def obstacle_gauche (message) : 
     qualite_min = 8
-    distance_min_1 = 30
-    distance_min_2 = 55
+    distance_min_1 = 300
+    distance_min_2 = 550
     ret = False
     for t in message:
         if t[0]>=qualite_min:
