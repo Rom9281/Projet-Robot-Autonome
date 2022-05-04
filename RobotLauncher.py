@@ -13,8 +13,10 @@ flag = True
 q_com = mp.Queue() # queue contenant les commandes
 q_info = mp.Queue() # queue contenant les informations
 
-corps = CorpsRobot(q_com,q_info)
-intel = IntelligenceRobot(q_com,q_info)
+sem_start = mp.Semaphore(0)
+
+corps = CorpsRobot(q_com,q_info,sem_start)
+intel = IntelligenceRobot(q_com,q_info,sem_start)
 
 corps.start()
 intel.start()
@@ -22,10 +24,8 @@ intel.start()
 print("[*] Corps PID %s"%(corps.pid))
 print("[*] Intel PID %s"%(intel.pid))
 
-#robot = Robot(corps.pid,intel.pid)
-#robot.start()
-"""
-time.sleep(1)
+sem_start.acquire()
+sem_start.acquire()
 
 while flag:
 
@@ -33,14 +33,19 @@ while flag:
 
     if(commande == "off"):
         flag = False
-        os.kill(corps.pid, signal.SIGTERM)
-        os.kill(intel.pid, signal.SIGTERM)
-        
 
-"""
-# robot.join()
-intel.join()
-corps.join()
+        corps.terminate()
+        corps.join()
+
+        intel.terminate()
+        intel.join()
+    
+
+    if(commande[0:2] == "C:"):
+        commande = commande[3:]
+        q_com.put(commande)
+
+
 print("ENDED")
-os.exit()
+exit()
 

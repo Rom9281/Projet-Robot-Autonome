@@ -22,15 +22,14 @@ from Model.Serializer import Serializer
 
 class CorpsRobot(Process):
     
-    def __init__(self,q_com,q_info):
-
+    def __init__(self,q_com,q_info,sem_start):
         super(CorpsRobot, self).__init__()
 
         # Multiprocessing
         self.__q_com = q_com
         self.__q_info = q_info
+        self.__sem_start = sem_start
         self.__flag = True
-        signal.signal(signal.SIGTERM, self.__signal_handler)
 
         # Configuration des peripheriques direct
         self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
@@ -40,6 +39,7 @@ class CorpsRobot(Process):
         self.__stm = STM(
             self.__config_periph["STM32"]["Pin"],
             self.__config_periph["STM32"]["Baud"])
+        
 
         self.__lidar = Lidar(
             self.__config_periph["Lidar"]["Pin"],
@@ -49,6 +49,7 @@ class CorpsRobot(Process):
         self.__servo_moteur = ServoMoteur(self.__stm)
         self.__serializer = Serializer(self.__stm)
 
+
         """
         self.__serializer = Serializer(
             self.__config_periph["Serializer"]["Pin"],
@@ -56,14 +57,28 @@ class CorpsRobot(Process):
         """
     
     def run(self):
+        signal.signal(signal.SIGTERM, self.signal_handler)
+
         print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
+
+        self.__sem_start.release()
+
         while self.__flag:
+            commande = ''
+
+            #try:
+            commande = self.__q_com.get(block=True, timeout=None)
+            """
+            except:
+                print("[$] %s:%s Commande Queue empty"%(os.getppid(),os.getpid()))
+            """
+            print("Commande = %s"%(commande,))
+
             self.__serializer.avancer(10)
             self.__servo_moteur.mouvementHorizontal(90)
-            time.sleep(2)
             
     
-    def __signal_handler(self,signum, frame):
+    def signal_handler(self,signum,frame):
         print("[*] Process Corps est arrêté")
         self.__flag = False
     

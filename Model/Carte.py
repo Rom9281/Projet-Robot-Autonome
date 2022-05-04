@@ -20,7 +20,8 @@ class Carte(Peripherique):
             """
 
         else:
-            print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
+            pass
+            #print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
 
         return ret
 
