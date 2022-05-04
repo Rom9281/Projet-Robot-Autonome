@@ -1,3 +1,4 @@
+from calendar import c
 from Model.Peripherique import Peripherique
 
 class Carte(Peripherique):
@@ -19,6 +20,11 @@ class Carte(Peripherique):
         return ret
 
     def lireCommande(self):
+        ret = False
         # TODO : permettre de parser les valeur lues pour les transmettres
         ret = self._serial.read()
         return ret
+    
+    def recupererInfo(self,commande):
+        self.ecrireCommand(commande)
+        return self.lireCommande()

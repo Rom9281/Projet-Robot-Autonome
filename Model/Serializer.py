@@ -1,9 +1,9 @@
 #from Model.Actionneur import Actionneur
 #from Controller.Enums import Vitesse, Commande,Sens
 
-from Model.ActionneurCarte import ActionneurCarte
+from Model.PeripheriqueCarte import PeripheriqueCarte
 
-class Serializer(ActionneurCarte):
+class Serializer(PeripheriqueCarte):
     
     def __init__(self,carte):
         # super().__init__(pin,baude_rate)
