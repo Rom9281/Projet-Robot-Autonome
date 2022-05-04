@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ##Nettoyage
-cv2.destroyAllWindows()
+#cv2.destroyAllWindows()
 
 ##Fonctions
 def matrice_couleur(image,k):
@@ -144,7 +144,8 @@ def detection_cercle_color(image,red_seuil,green_seuil,blue_seuil,liste_THRESH_B
     return image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle
 
 ##Caméra
-cap = cv2.VideoCapture(cv2.CAP_DSHOW) #1+ cv2.CAP_DSHOW
+#cap = cv2.VideoCapture(cv2.CAP_DSHOW) #1+ cv2.CAP_DSHOW
+cap = cv2.VideoCapture(0) #1+ cv2.CAP_DSHOW
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out = cv2.VideoWriter('output.avi',fourcc, 25.0, (640,480))
@@ -152,7 +153,9 @@ red_seuil = 150
 green_seuil = 150
 blue_seuil = 100
 liste_THRESH_BINARY=[cv2.THRESH_BINARY,cv2.THRESH_BINARY_INV,cv2.THRESH_BINARY]
+print("ok")
 while( cap.isOpened() ):
+    
     ret, frame = cap.read()
     if ret == True:
         frame = cv2.flip(frame,1)
@@ -173,11 +176,13 @@ while( cap.isOpened() ):
         break
 cap.release()
 out.release()
-cv2.destroyAllWindows()
 
+#cv2.destroyAllWindows()
+"""
 cv2.imshow('Seuil rouge',image_red_seuil)
 cv2.imshow('Seuil vert',image_green_seuil)
 cv2.imshow('Seuil bleu',image_blue_seuil)
 cv2.imshow('Image color seuil',image_seuil)
 cv2.imshow('Image avec contours',frame_contours)
 cv2.imshow('Image avec cercles',frame_cercle)
+"""
