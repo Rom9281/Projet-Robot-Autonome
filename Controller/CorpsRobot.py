@@ -37,16 +37,19 @@ class CorpsRobot(Process):
         self.__vitesse = Vitesse.RAPIDE # Definit la vitesse initiale comme lente
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
 
+        # On configure la carte a laquelle va etre connecte les peripheriques
         self.__stm = STM(
             self.__config_periph["STM32"]["Pin"],
             self.__config_periph["STM32"]["Baud"])
         
 
+        # On ajoute un lidar directement connecté au raspberry
         self.__lidar = Lidar(
             self.__config_periph["Lidar"]["Pin"],
             self.__config_periph["Lidar"]["Baud"]
         )
-
+        
+        # On ajoute les elements connectés au stm32
         self.__servo_moteur = ServoMoteur(self.__stm)
         self.__serializer = Serializer(self.__stm)
         self.__led = LED(self.__stm)
