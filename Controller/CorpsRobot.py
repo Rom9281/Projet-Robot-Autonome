@@ -69,9 +69,6 @@ class CorpsRobot(Process):
     
 
 
-
-
-
     """"
     Prend une distance en metre et envois la commande au Serializer
     NOTE : Distance en cm, vitesse comme décrite dans le enum vitesse
