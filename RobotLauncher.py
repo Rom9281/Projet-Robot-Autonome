@@ -42,8 +42,10 @@ while flag:
     
 
     if(commande[0:2] == "C:"):
-        commande = commande[3:]
+        commande = commande[2:]
         q_com.put(commande)
+        sem_start.acquire()
+        sem_start.acquire()
 
 
 print("ENDED")

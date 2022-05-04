@@ -74,8 +74,22 @@ class CorpsRobot(Process):
             """
             print("Commande = %s"%(commande,))
 
-            self.__serializer.avancer(10)
-            self.__servo_moteur.mouvementHorizontal(90)
+            self.gererCommande(commande)
+
+            self.__sem_start.release()
+            self.__sem_start.release()
+    
+    def gererCommande(self,commande):
+        commande = commande.split(":")
+
+        if(commande[0] == "Z"):
+            self.__serializer.avancer(commande[1])
+            
+        elif(commande[0] == "D"):
+            self.__serializer.tournerDroite(commande[1])
+        
+        elif(commande[0] == "X"):
+            self.__servo_moteur.mouvementHorizontal(commande[1])
             
     
     def signal_handler(self,signum,frame):

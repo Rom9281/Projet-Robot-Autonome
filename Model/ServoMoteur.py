@@ -11,8 +11,8 @@ class ServoMoteur(ActionneurCarte):
         self._arg2 = str(angle)
         self._carte.ecrireCommand(self._creerCommande())
     
-    def mouvementHorizontal(self,angle):
-        self._arg1 = "0"
+    def mouvementVertical(self,angle):
+        self._arg1 = "1"
         self._arg2 = str(angle)
         self._carte.ecrireCommand(self._creerCommande())
     

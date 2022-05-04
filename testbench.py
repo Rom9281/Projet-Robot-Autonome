@@ -100,9 +100,12 @@ writ = "digo 1:%s:25 2:0:0\r" % (distance)
 print("Distance = %s"%(distance))
 print(ser.write(writ.encode()))
 """
-ser = serial.Serial("/dev/ttyUSB1",19200)
-writ = "PSTSRV:0:90\n"
+ser = serial.Serial("/dev/ttyUSB2",19200)
+
+writ = "PSTSRV : 1 : 90\n"
+
 while True:
+    print(writ)
     print(ser.write(writ.encode()))
     time.sleep(2)
 

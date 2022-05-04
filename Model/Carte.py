@@ -11,17 +11,10 @@ class Carte(Peripherique):
         if(self._serial):
             print(command)
             print(self._serial.write(command.encode()))
-            
-            """
-            if():
-                ret=True
-            else:
-                print("[$] %s : Commande non envoyé"%(self.__class__.__name__))
-            """
 
         else:
             pass
-            #print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
+            print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
 
         return ret
 

@@ -2,13 +2,13 @@
     "Lidar":
     {
         "Baud":19200,
-        "Pin":"/dev/ttyUSB0"
+        "Pin":"/dev/ttyUSB1"
     },
     
     "STM32":
     {
         "Baud":19200,
-        "Pin":"/dev/ttyUSB1"
+        "Pin":"/dev/ttyUSB2"
     }
         
 }
