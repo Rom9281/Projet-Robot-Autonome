@@ -1,15 +1,16 @@
 import sys
+from turtle import position
 import serial
 import matplotlib.pyplot as plt
 import numpy as np
 import random, math, time
 
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
+# sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
+# sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
+# sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
 
-from Controller.Robot import Robot
-from rplidar import RPLidar
+# from Controller.Robot import Robot
+# from rplidar import RPLidar
 
 """
 def polarToCartesian(data):
@@ -100,12 +101,106 @@ writ = "digo 1:%s:25 2:0:0\r" % (distance)
 print("Distance = %s"%(distance))
 print(ser.write(writ.encode()))
 """
-ser = serial.Serial("/dev/ttyUSB2",19200)
+# ser = serial.Serial("/dev/ttyUSB2",19200)
 
-writ = "PSTSRV : 1 : 90\n"
+# writ = "PSTSRV : 1 : 90\n"
 
-while True:
-    print(writ)
-    print(ser.write(writ.encode()))
-    time.sleep(2)
+# while True:
+#     print(writ)
+#     print(ser.write(writ.encode()))
+#     time.sleep(2)
+
+
+#######################################################################
+
+
+"""
+* Programme de test de toutes les fonctions du robot
+"""
+import keyboard
+
+def envoyerCommande(ser, commande, param1, param2):
+    message = f"{commande} : {param1} : {param2}\r\n"
+    # print(ser.write(message.encode()))
+    print(message)
+    time.sleep(0.2)
+    return 0
+
+  
+def gestionUltrason(commande):
+    envoyerCommande(ser, "USNDST", commande, 0)
+    # print(ser.readline().decode())
+
+positionH = 0
+positionV = 0
+ser = 10
+# ser = serial.Serial("COM7",19200)
+# ser.readline()
+while 1:
+
+    # #deplacement du robot
+    if keyboard.is_pressed("z"):
+        envoyerCommande(ser, "MVMTR", 0, 10)
+
+    elif  keyboard.is_pressed("q"):
+        envoyerCommande(ser, "MVMTR", 2, 10)
+
+    elif  keyboard.is_pressed("s"):
+        envoyerCommande(ser, "MVMTR", 3, 10)
+
+    elif  keyboard.is_pressed("d"):
+        envoyerCommande(ser, "MVMTR", 1, 10)
+
+     # # visé plus tire
+    elif  keyboard.is_pressed("o"):
+        positionV = (positionV + 10) % 180
+        envoyerCommande(ser, "PSTSRV", 1, positionV)
+    
+    elif  keyboard.is_pressed("k"):
+        positionH = (positionH + 10) % 180
+        envoyerCommande(ser, "PSTSRV", 0, positionH)
+    
+    elif  keyboard.is_pressed("l"):
+        positionV = (positionV - 10) % 180
+        envoyerCommande(ser, "PSTSRV", 1, positionV)
+
+    elif  keyboard.is_pressed("m"):
+        positionH = (positionH - 10) % 180
+        envoyerCommande(ser, "PSTSRV", 0, positionH)
+    
+    elif  keyboard.is_pressed("t"):
+        positionV = (positionV + 10) % 180
+        envoyerCommande(ser, "TIRLMP", 0, 0)
+        
+
+     # # demande information ultrason
+
+    elif  keyboard.is_pressed("a"):
+        gestionUltrason(0)
+
+    elif  keyboard.is_pressed("r"):
+        gestionUltrason(1)
+    
+
+    # #deplacement du robot
+    # keyboard.on_press_key("z", lambda ser: envoyerCommande(ser, "MVMTR", 0, 10))
+    # keyboard.on_press_key("q", lambda ser: envoyerCommande(ser, "MVMTR", 2, 10))
+    # keyboard.on_press_key("s", lambda ser: envoyerCommande(ser, "MVMTR", 3, 10))
+    # keyboard.on_press_key("d", lambda ser: envoyerCommande(ser, "MVMTR", 1, 10))
+
+    # # visé plus tire
+    # keyboard.on_press_key("o", lambda positionV: envoyerCommande("PSTSRV", 1, positionV+10))
+    # keyboard.on_press_key("k", lambda positionH: envoyerCommande("PSTSRV", 0, positionH+10))
+    # keyboard.on_press_key("l", lambda positionV: envoyerCommande("PSTSRV", 1, positionV-10))
+    # keyboard.on_press_key("m", lambda positionH: envoyerCommande("PSTSRV", 0, positionH-10))
+    
+    # keyboard.on_press_key("t", lambda : envoyerCommande("TIRLMP", 0, 0))
+
+    # # demande information
+    # keyboard.on_press_key("a", lambda : gestionUltrason(0))
+    # keyboard.on_press_key("r", lambda : gestionUltrason(1))
+
+
+
+
 
