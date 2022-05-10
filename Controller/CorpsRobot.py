@@ -12,7 +12,7 @@ Description :  Modélisation du robot en entier
 import json, time,signal,os
 from multiprocessing import Process
 
-from Controller.Enums import Vitesse, Commande,Sens
+from Controller.Enums import Vitesse, Commande
 
 # from Model.Serializer import Serializer
 from Model.STM import STM
@@ -62,22 +62,19 @@ class CorpsRobot(Process):
         """
     
     def run(self):
-        signal.signal(signal.SIGTERM, self.signal_handler)
+        signal.signal(signal.SIGTERM, self.signal_handler) # Definition du signal d'arret
 
-        print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid()))
+        print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid())) 
 
-        self.__sem_start.release()
+        self.__sem_start.release() # Permet au processus père de commencer
 
         while self.__flag:
             commande = ''
 
-            #try:
             commande = self.__q_com.get(block=True, timeout=None)
-            """
-            except:
-                print("[$] %s:%s Commande Queue empty"%(os.getppid(),os.getpid()))
-            """
-            print("Commande = %s"%(commande,))
+            # La commande n'a aucun timeout
+
+            #print("Commande = %s"%(commande,))
 
             self.gererCommande(commande)
 
@@ -87,17 +84,41 @@ class CorpsRobot(Process):
     def gererCommande(self,commande):
         commande = commande.split(":")
 
-        if(commande[0] == "Z"):
+        if(commande[0] == Commande.AVANCER):
             self.__serializer.avancer(commande[1])
             
-        elif(commande[0] == "D"):
+        elif(commande[0] == Commande.TOURDROIT):
             self.__serializer.tournerDroite(commande[1])
+
+        elif(commande[0] == Commande.TOURGAUCHE):
+            self.__serializer.tournerGauche(commande[1])
         
-        elif(commande[0] == "X"):
+        elif(commande[0] == Commande.RECULER):
+            self.__serializer.reculer(commande[1])
+        
+        elif(commande[0] == Commande.ROTHORIZON):
             self.__servo_moteur.mouvementHorizontal(commande[1])
         
-        elif(commande[0] == "T"):
+        elif(commande[0] == Commande.ROTVERTICAL):
+            self.__servo_moteur.mouvementVertical(commande[1])
+        
+        elif(commande[0] == Commande.ROTHORGCH):
+            self.__servo_moteur.petitMouvHorGch()
+        
+        elif(commande[0] == Commande.ROTHORDRT):
+            self.__servo_moteur.petitMouvHorDrt()
+        
+        elif(commande[0] == Commande.ROTVERDRT):
+            self.__servo_moteur.petitMouvVerDrt()
+        
+        elif(commande[0] == Commande.ROTVERGCH):
+            self.__servo_moteur.petitMouvVerGch()
+        
+        elif(commande[0] == Commande.TIRER):
             self.__led.tirer()
+        
+        else:
+            print("Unerconised")
 
             
     

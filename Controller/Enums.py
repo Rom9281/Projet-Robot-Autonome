@@ -11,4 +11,19 @@ class Vitesse(Enum):
 
 class Commande(Enum):
     AVANCER = 1
-    TOURNER = 2 
+
+    TOURGAUCHE = 2 
+    TOURDROIT = 3
+    
+    RECULER = 4
+
+    TIRER = 5
+
+    ROTHORIZON = 6 # Rotation de la tour à l'horizontal 
+    ROTVERTICAL = 7 # Rotation de la tour à la verticale
+
+    ROTVERDRT = 8 # Rotation de la tour à la veritcale droite
+    ROTVERGCH = 9 # Rotation de la tour à la verticale gauche
+    ROTHORDRT = 10 # Rotation de la tour à l'horizontal droite
+    ROTHORGCH = 11 # Rotation de la tour à l'horizontal gauce
+

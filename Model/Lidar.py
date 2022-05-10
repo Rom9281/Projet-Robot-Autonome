@@ -2,10 +2,19 @@ from rplidar import RPLidar
 from Model.CapteurPeriph import CapteurPeriph
 import matplotlib.pyplot as plt
 import numpy as np,math
+import time
+
+
 
 class Lidar(CapteurPeriph):
     def __init__(self, pin, baude_rate):
         super().__init__(pin, baude_rate)
+
+        self.__min_quailty = 8 # Qualité minimum de la mesure persue
+        
+        self.__coord_init=[0,0]
+        self.__coord_actuelle=[0,0]
+        self.__orientation_actuelle=0
         
         """
         if(self._serial):
@@ -18,7 +27,6 @@ class Lidar(CapteurPeriph):
                 except:
                     print("[$] Error, retrying")
         """
-
     
     def _connect(self):
         ret = None
@@ -37,6 +45,7 @@ class Lidar(CapteurPeriph):
         return self._serial.get_health()
     
     def __polarToCartesian(self,data):
+        data = self.__cleanData(data)
         X = []
         Y = []
         Theta= []
@@ -51,12 +60,12 @@ class Lidar(CapteurPeriph):
 
         return X,Y,Theta,R
 
-    def __cleanData(self,data,min_quality):
+    def __cleanData(self,data):
         clean_data = []
 
         for coord in data:
 
-            if coord[0] > min_quality:
+            if coord[0] > self.__min_quality:
                 clean_data.append((coord[1],coord[2]))
 
         return clean_data
@@ -67,6 +76,9 @@ class Lidar(CapteurPeriph):
         ax.spines['right'].set_color('none')
         ax.spines['bottom'].set_position('zero')
         ax.spines['top'].set_color('none')
+    
+    def getMeasure(self):
+        return self.__polarToCartesian(self._serial.iter_scans(max_buf_meas=500, min_len=100))
         
     def displayIHM(self):
         plt.ion()
@@ -94,5 +106,3 @@ class Lidar(CapteurPeriph):
                 fig.canvas.draw()
                 fig.canvas.flush_events()
                 #time.sleep(0.4)
-
-    
