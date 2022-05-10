@@ -5,13 +5,12 @@ import numpy as np,math
 import time
 
 
-
 class Lidar(CapteurPeriph):
     def __init__(self, pin, baude_rate):
         super().__init__(pin, baude_rate)
 
         self.__min_quailty = 8 # Qualité minimum de la mesure persue
-        
+
         self.__coord_init=[0,0]
         self.__coord_actuelle=[0,0]
         self.__orientation_actuelle=0

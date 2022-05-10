@@ -11,23 +11,25 @@ class ServoMoteur(PeripheriqueCarte):
         self._arg2 = str(angle)
         self._carte.ecrireCommand(self._creerCommande())
         self.__angle_hor = angle
+        return self._carte.valider(self._commande)
     
     def mouvementVertical(self,angle):
         self._arg1 = "1"
         self._arg2 = str(angle)
         self._carte.ecrireCommand(self._creerCommande())
         self.__angle_ver = angle
+        return self._carte.valider(self._commande)
     
     def petitMouvVerDrt(self):
-        self.mouvementVertical(self.__angle_ver+10)
+        return self.mouvementVertical(self.__angle_ver+10)
 
     def petitMouvVerGch(self):
-        self.mouvementVertical(self.__angle_ver-10)
+        return  self.mouvementVertical(self.__angle_ver-10)
 
     def petitMouvHorDrt(self):
-        self.mouvementHorizontal(self.__angle_ver+10)
+        return self.mouvementHorizontal(self.__angle_ver+10)
 
     def petitMouvHorGch(self):
-        self.mouvementHorizontal(self.__angle_ver-10)
+        return self.mouvementHorizontal(self.__angle_ver-10)
 
     

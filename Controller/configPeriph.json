@@ -8,7 +8,7 @@
     "STM32":
     {
         "Baud":19200,
-        "Pin":"/dev/ttyUSB2"
+        "Pin":"/dev/ttyUSB0"
     }
         
 }

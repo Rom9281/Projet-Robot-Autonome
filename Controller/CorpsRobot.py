@@ -34,13 +34,13 @@ class CorpsRobot(Process):
 
         # Configuration des peripheriques direct
         self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
-        self.__vitesse = Vitesse.RAPIDE # Definit la vitesse initiale comme lente
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
 
         # On configure la carte a laquelle va etre connecte les peripheriques
         self.__stm = STM(
             self.__config_periph["STM32"]["Pin"],
-            self.__config_periph["STM32"]["Baud"])
+            self.__config_periph["STM32"]["Baud"]
+            )
         
 
         # On ajoute un lidar directement connecté au raspberry
@@ -69,8 +69,6 @@ class CorpsRobot(Process):
         self.__sem_start.release() # Permet au processus père de commencer
 
         while self.__flag:
-            commande = ''
-
             commande = self.__q_com.get(block=True, timeout=None)
             # La commande n'a aucun timeout
 
@@ -78,7 +76,6 @@ class CorpsRobot(Process):
 
             self.gererCommande(commande)
 
-            self.__sem_start.release()
             self.__sem_start.release()
     
     def gererCommande(self,commande):
