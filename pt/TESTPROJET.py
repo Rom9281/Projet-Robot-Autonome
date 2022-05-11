@@ -6,9 +6,7 @@ import cv2
 
 
 
-#           Declaration des variables
-nb_cible = 4
-nb_cible_touche= 0
+#Declaration des variables
 coord_init = [1,1]
 coord_actuelle = [1,1]
 orientation_actuelle = 0
@@ -17,6 +15,8 @@ compteur_exploration = 1
 taille_map=10
 distance_min_mvmt=1
 
+
+#
 M=np.zeros((taille_map,taille_map)) 
 M[0][1]=1
 M[1][0]=1
@@ -35,56 +35,6 @@ N=[[1,1,1,1,1,1,1,1,1,1],
 
 
 
-#          Creation de 3 fonctions obstacles
-
-def obstacle_gauche():
-    ret=False
-    if orientation_actuelle == 0:
-       if N[coord_actuelle[0]-1][coord_actuelle[1]]==1:
-           ret = True
-    elif orientation_actuelle == 1:
-        if N[coord_actuelle[0]][coord_actuelle[1]+1]==1:
-            ret = True
-    elif orientation_actuelle == 2:
-        if N[coord_actuelle[0]+1][coord_actuelle[1]]==1:
-            ret = True
-    else :
-         if N[coord_actuelle[0]][coord_actuelle[1]-1]==1:
-            ret = True
-    return ret
-    
-
-def obstacle_droite():
-    ret=False
-    if orientation_actuelle == 0:
-       if N[coord_actuelle[0]+1][coord_actuelle[1]]==1:
-           ret = True
-    elif orientation_actuelle == 1:
-        if N[coord_actuelle[0]][coord_actuelle[1]-1]==1:
-            ret = True
-    elif orientation_actuelle == 2:
-        if N[coord_actuelle[0]-1][coord_actuelle[1]]==1:
-            ret = True
-    else :
-         if N[coord_actuelle[0]][coord_actuelle[1]+1]==1:
-            ret = True
-    return ret
-
-def obstacle_avant():
-    ret=False
-    if orientation_actuelle == 0:
-       if N[coord_actuelle[0]][coord_actuelle[1]+1]==1:
-           ret = True
-    elif orientation_actuelle == 1:
-        if N[coord_actuelle[0]+1][coord_actuelle[1]]==1:
-            ret = True
-    elif orientation_actuelle == 2:
-        if N[coord_actuelle[0]][coord_actuelle[1]-1]==1:
-            ret = True
-    else :
-         if N[coord_actuelle[0]-1][coord_actuelle[1]]==1:
-            ret = True
-    return ret
 
 
 
@@ -114,19 +64,6 @@ def avancer():
     print(coord_actuelle)
     return "mogo 1:-30 2:-30\r"
 
-def reculer():
-    global orientation_actuelle
-    if orientation_actuelle == 0:
-        coord_actuelle[1]-=1
-    elif orientation_actuelle == 1:
-        coord_actuelle[0]-=1
-    elif orientation_actuelle ==2 :
-        coord_actuelle[1]+=1
-    else :
-        coord_actuelle[0]+=1
-    print('recule')
-    time.sleep(0.5)
-    return "mogo 1:30 2:30\r"
 
 #           fonction de base
 
@@ -224,23 +161,35 @@ def maj_obstacle_avant():
 
 
 def contournement(x):
-    virage_gauche()
-    avancer()
-    while obstacle_droite():
-        maj_obstacle_droite()
+    if obstacle_gauche():
+        maj_obstacle_gauche()
+        virage_gauche()
+        virage_gauche()
         avancer()
-
-    virage_droite()
-    avancer()
-
-    while obstacle_droite():
-        print()
-        maj_obstacle_droite()
+        while obstacle_droite():
+            maj_obstacle_droite()
+            avancer()
+        virage_droite()
         avancer()
-    virage_droite()
-    avancer()
+    else :
+        virage_gauche()
+        avancer()
     while coord_actuelle[0]!=x:
-        avancer()
+        if obstacle_avant() and obstacle_droite():
+            maj_obstacle_avant()
+            virage_gauche() 
+            avancer()
+            while obstacle_droite():
+                maj_obstacle_droite()
+                avancer()
+            virage_droite()
+            avancer()
+        elif obstacle_droite():
+            maj_obstacle_droite()
+            avancer()
+        else : 
+            virage_droite()
+            avancer()
     virage_gauche()
     return
 
