@@ -1,9 +1,15 @@
 import fonction_lidar as fl
 import fonction_obstacles as fo
 import time
+
+
 coord_init=[0,0]
 coord_actuelle=[0,1]
 orientation_actuelle=0
+distance_decalage = 2
+compteur_exploration = 1
+taille_map=10
+distance_min_mvmt=1
 
 
 
