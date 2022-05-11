@@ -12,7 +12,7 @@ def envoyerCommande(ser, commande, param1, param2):
     message = f"{commande} : {param1} : {param2}\r\n"
     print(ser.write(message.encode()))
     print(message)
-    time.sleep(0.2)
+    time.sleep(0.5)
     return 0
 
   
@@ -30,7 +30,6 @@ while 1:
 
     # #deplacement du robot
     if keyboard.is_pressed("z"):
-        print("Sent")
         envoyerCommande(ser, "MVMTR", 0, 10)
 
     elif  keyboard.is_pressed("q"):
@@ -90,6 +89,7 @@ while 1:
     # # demande information
     # keyboard.on_press_key("a", lambda : gestionUltrason(0))
     # keyboard.on_press_key("r", lambda : gestionUltrason(1))
+
 
 
 

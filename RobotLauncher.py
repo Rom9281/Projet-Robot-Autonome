@@ -1,15 +1,23 @@
-import multiprocessing as mp,signal,os, keyboard
-from Controller.Enums import Commande
+"""
+Programme de lancement principal du robot,
+Agis pour le moment également comme l'interface graphique avec l'utilisateur
+"""
+from ast import Import
+import multiprocessing as mp, keyboard,sys, json
 
-import sys,time
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
-sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
+#sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
+#sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
+#sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
+
 sys.path.append(r'~/.local/lib/python3.7/site-packages' )
 
-from Controller.Robot import Robot
+# Bibliothèques personelles
 from Controller.CorpsRobot import CorpsRobot
 from Controller.IntelligenceRobot import IntelligenceRobot
+
+# Recuperation des commandes dans le path
+config_commandes_path = "/home/pi/Documents/Controller/commandes.json"
+commandes = json.load(open(config_commandes_path)) # récupère la config des periphériques dans le json
 
 flag = True
 q_com = mp.Queue() # queue contenant les commandes
@@ -30,58 +38,68 @@ print("[*] Intel PID %s"%(intel.pid))
 sem_start.acquire()
 sem_start.acquire()
 
-while flag: # Tant qu'aucun signal d'arret n'est actif
-
-    if keyboard.is_pressed(" "):
-        print("letsgo")
-
-    if keyboard.is_pressed("f"):
-        print("ok")
-        flag = False
-
-        corps.terminate()
-        corps.join()
-
-        intel.terminate()
-        intel.join()
+try:
+    while flag: # Tant qu'aucun signal d'arret n'est actif
     
-    if keyboard.is_pressed("z"):
-        q_com.put(str(Commande.AVANCER)+":"+str(2))
-        sem_start.acquire()
 
-    elif  keyboard.is_pressed("q"):
-        q_com.put(Commande.TOURGAUCHE+":"+2)
-        sem_start.acquire()
+        if keyboard.is_pressed("i"):
+            print("[$] INTERRUPTION : ending all processes")
+            q_com.put("STOP")
+            flag = False
+            break
+        
+        if keyboard.is_pressed("z"):
+            q_com.put(f"{commandes['avancer']}:2")
+            sem_start.acquire()
+            
+        elif  keyboard.is_pressed("q"):
+            q_com.put(f"{commandes['tourner_gauche']}:2")
+            sem_start.acquire()
 
-    elif  keyboard.is_pressed("s"):
-        q_com.put(Commande.RECULER+":"+2)
-        sem_start.acquire()
+        elif  keyboard.is_pressed("s"):
+            q_com.put(f"{commandes['reculer']}:2")
+            sem_start.acquire()
 
-    elif  keyboard.is_pressed("d"):
-        q_com.put(Commande.TOURDROIT+":"+2)
-        sem_start.acquire()
+        elif  keyboard.is_pressed("d"):
+            q_com.put(f"{commandes['tourner_droite']}:2")
+            sem_start.acquire()
 
-     # # visé plus tire
-    elif  keyboard.is_pressed("k"):
-        q_com.put(Commande.ROTHORGCH)
-        sem_start.acquire()
-    
-    elif  keyboard.is_pressed("m"):
-        q_com.put(Commande.ROTHORDRT)
-        sem_start.acquire()
+        # # visé plus tire
+        elif  keyboard.is_pressed("k"):
+            q_com.put(commandes["tourner_gauche"])
+            sem_start.acquire()
 
-    elif  keyboard.is_pressed("o"):
-        q_com.put(Commande.ROTVERDRT)
-        sem_start.acquire()
-    
-    elif  keyboard.is_pressed("l"):
-        q_com.put(Commande.ROTVERGCH)
-        sem_start.acquire()
-    
-    elif  keyboard.is_pressed("t"):
-        q_com.put(Commande.TIRER+":0")
-        sem_start.acquire()
+        elif  keyboard.is_pressed("m"):
+            q_com.put(commandes["rot_hor_droite"])
+            sem_start.acquire()
 
+        elif  keyboard.is_pressed("o"):
+            q_com.put(commandes["rot_ver_droite"])
+            sem_start.acquire()
+        
+        elif  keyboard.is_pressed("l"):
+            q_com.put(commandes["rot_ver_gauche"])
+            sem_start.acquire()
+        
+        elif  keyboard.is_pressed("k"):
+            q_com.put(commandes["rot_hor_gauche"])
+            sem_start.acquire()
+        
+        elif  keyboard.is_pressed("t"):
+            q_com.put(commandes["tirer"])
+            sem_start.acquire()
+        
+        
+
+
+except ImportError as e:
+    print(f"[$] {e} : veuillez être root pour lancer le programme")
+
+# corps.terminate()
+intel.terminate()
+
+corps.join()
+intel.join()
 print("ENDED")
-exit()
+
 

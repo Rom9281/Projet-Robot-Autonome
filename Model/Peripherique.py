@@ -15,6 +15,7 @@ class Peripherique(ABC):
             try:
                 ret = serial.Serial(self._pin, self._baude_rate)
             except:
-                pass
+               print("[$] Failed to connect to the serial")
+
 
             return ret

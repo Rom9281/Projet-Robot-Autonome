@@ -11,6 +11,9 @@ class Lidar(CapteurPeriph):
 
         self.__min_quality = 8 # Qualité minimum de la mesure persue
 
+        self.__iter = 0
+        self.__flag = True
+
         self.__coord_init = [0,0]
         self.__coord_actuelle = self.__coord_init
         self.__orientation_actuelle = 0
@@ -32,7 +35,9 @@ class Lidar(CapteurPeriph):
 
         try:
             ret = RPLidar(self._pin)
-        except:
+            print(f"[$] Info Lidar : {self._getInfo}")
+            print(f"[$] Santé Lidar : {self._getHealth}")
+        except :
             print("[$] Failed to connect to the Lidar")
 
         return ret
@@ -42,22 +47,6 @@ class Lidar(CapteurPeriph):
     
     def _getHealth(self):
         return self._serial.get_health()
-    
-    def __polarToCartesian(self,data):
-        data = self.__cleanData(data)
-        X = []
-        Y = []
-        Theta= []
-        R = []
-
-
-        for coord in data:
-            X.append(coord[1]*math.cos(np.radians(coord[0])))
-            Y.append( coord[1]*math.sin(np.radians(coord[0])))
-            Theta.append(coord[0])
-            R.append(coord[1])
-
-        return X,Y,Theta,R
 
     def __cleanData(self,data):
         clean_data = []
@@ -68,17 +57,38 @@ class Lidar(CapteurPeriph):
                 clean_data.append((coord[1],coord[2]))
 
         return clean_data
+    
+    def getMeasure(self):
+        self.__iter += 1
+        ret= ""
+        data = ""
 
+        try:
+            data = next(self._serial.iter_scans(max_buf_meas=200, min_len=130))
+
+        except:
+            print(f"[$] Erreur lidar : Mauvais bit de lancement - Nouvelle tentative")
+
+        data = self.__cleanData(data) # Nettoie les données 
+        
+        # joining all the tuples
+        ret = list(map(self.__join_tuple_string, data))
+        return ret
+    
+    # function that converts tuple to string
+    def __join_tuple_string(strings_tuple) -> str:
+        return ','.join(strings_tuple)
+
+    
+
+    """
     def __reax(self,ax):
         ax.grid(True)
         ax.spines['left'].set_position('zero')
         ax.spines['right'].set_color('none')
         ax.spines['bottom'].set_position('zero')
         ax.spines['top'].set_color('none')
-    
-    def getMeasure(self):
-        return self.__polarToCartesian(self._serial.iter_scans(max_buf_meas=500, min_len=100))
-        
+
     def displayIHM(self):
         plt.ion()
 
@@ -105,3 +115,19 @@ class Lidar(CapteurPeriph):
                 fig.canvas.draw()
                 fig.canvas.flush_events()
                 #time.sleep(0.4)
+
+    def __polarToCartesian(self,data):
+        data = self.__cleanData(data)
+        X = []
+        Y = []
+        Theta= []
+        R = []
+
+        for coord in data:
+            X.append(coord[1]*math.cos(np.radians(coord[0])))
+            Y.append( coord[1]*math.sin(np.radians(coord[0])))
+            Theta.append(coord[0])
+            R.append(coord[1])
+
+        return X,Y,Theta,R
+    """

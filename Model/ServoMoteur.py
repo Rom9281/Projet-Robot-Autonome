@@ -24,7 +24,7 @@ class ServoMoteur(PeripheriqueCarte):
     def petitMouvVerHaut(self):
         return self.mouvementVertical(self.__angle_ver+10)
 
-    def petitMouvVerBasq(self):
+    def petitMouvVerBas(self):
         return  self.mouvementVertical(self.__angle_ver-10)
 
     def petitMouvHorDrt(self):

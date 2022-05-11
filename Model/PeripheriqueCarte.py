@@ -13,10 +13,7 @@ class PeripheriqueCarte():
 
         
     def _creerCommande(self):
-        # ret = f"{self._commande} : {self._arg1} : {self._arg2}\n"
-        ret = self._commande+" : "
-        ret += self._arg1+" : "
-        ret += self._arg2+"\n"
+        ret = f"{self._commande} : {self._arg1} : {self._arg2}\n"
         return ret
     
     

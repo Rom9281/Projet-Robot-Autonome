@@ -10,7 +10,6 @@ class Carte(Peripherique):
         super().__init__(pin,baude_rate)
 
 
-
     """
     Permet d'ecrire une commande pour le peripherique
     Retourne 
