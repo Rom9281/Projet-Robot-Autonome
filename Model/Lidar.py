@@ -4,7 +4,6 @@ Maxime - Romain
 """
 
 # Bibliothèques exterieurs
-from multiprocessing import Process
 import matplotlib.pyplot as plt, json, signal, os, time
 from rplidar import RPLidar
 
@@ -12,12 +11,11 @@ from rplidar import RPLidar
 from Model.Peripherique import Peripherique
 
 
-class Lidar(Process,Peripherique):
-    def __init__(self,q_comm,sem_start):
+class Lidar(Peripherique):
+    def __init__(self,q_lidar):
         super(Lidar, self).__init__()
 
-        self.__q_comm = q_comm # Queue de commande
-        self.__sem_start = sem_start # Semaphore de départ
+        self.__q_lidar = q_lidar # Queue donnant les informations du lidar
 
         # Configuration des commandes:
         self.__config_commandes_path = "/home/pi/Documents/Controller/commandes.json"
@@ -50,25 +48,31 @@ class Lidar(Process,Peripherique):
     def _getHealth(self):
         return self._serial.get_health()
     
-    """
-    Methode principale pour le fonctionnement du LIDAR
-    """
-    def run(self):
-        # Traitement liés aux process
-        signal.signal(signal.SIGTERM, self.signal_handler)
-        print("[$] %s:%s : Process Intelligence actif"%(os.getppid(),os.getpid()))
-        self.__sem_start.release()
+    def __recupererMesures(self) -> list:
+        ret = []
 
-        # Boucle d'action
+        for i, scan in enumerate(self._serial.iter_scans()):
+            ret.append(scan)
+            break 
+
+        return ret
+    
+    def envoyerMesures(self):
+        new_list = []
+        self.__flag = False
+        
         while self.__flag:
-            
-            time.sleep(1)
-            # Mettre ici les taches effectués par le lidar
+            try:
+                serie = self.__recupererMesures()[0] # Recupere une serie de mesures
+                self.__flag = True
+            except:
+                print("[$] RPLidarException : Starting Byte Error - Nouvelle Tentative")
 
-            #self.__q_comm.put(self.__comm["tourner_gauche"]) 
-            # exemple pour mettre une commande dans la queue:
-            # q_com.put(commandes["rot_ver_gauche"])
-            # Voir le fichier commandes.json
+
+        for mesure in self.__cleanData(serie): # Nettoie la serie et prend chaque element (Le nettoyage passe les int en str)
+            new_list.append(','.join(mesure))
+        
+        return ':'.join(new_list)
 
     """
     Permet de virer les données en dessous d'un seuil de qualité
@@ -79,19 +83,17 @@ class Lidar(Process,Peripherique):
         for coord in data:
 
             if coord[0] > self.__min_quality:
-                clean_data.append((coord[1],coord[2]))
+                clean_data.append((str(coord[1]),str(coord[2])))
 
         return clean_data
     
     """
     Permet de gerer l'interruption du programme LidarIntel
-    """
+    
     def signal_handler(self,signum,frame):
         print("[*] Process LidarIntel est arrêté")
         self.__flag = False
-
-
-"""
+        
     def __reax(self,ax):
         ax.grid(True)
         ax.spines['left'].set_position('zero')
