@@ -5,7 +5,7 @@
         "Pin":"/dev/ttyUSB1"
     },
     
-    "STM32":
+    "STM":
     {
         "Baud":19200,
         "Pin":"/dev/ttyUSB0"

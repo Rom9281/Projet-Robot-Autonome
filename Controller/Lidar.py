@@ -3,29 +3,27 @@ Code pour le lidar:
 Maxime - Romain
 """
 
-# Imports
-from multiprocessing.dummy import Process
-import matplotlib.pyplot as plt, json, signal
+# Bibliothèques exterieurs
+from multiprocessing import Process
+import matplotlib.pyplot as plt, json, signal, os, time
 from rplidar import RPLidar
 
-# 
+# Internes
 from Model.Peripherique import Peripherique
 
 
-class Lidar(Peripherique,Process):
+class Lidar(Process,Peripherique):
     def __init__(self,q_comm,sem_start):
-        super().__init__(pin, baude_rate)
+        super(Lidar, self).__init__()
 
         self.__q_comm = q_comm # Queue de commande
-        self.__sem_start = sem_start # 
+        self.__sem_start = sem_start # Semaphore de départ
 
         # Configuration des commandes:
         self.__config_commandes_path = "/home/pi/Documents/Controller/commandes.json"
-        self.__com = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
+        self.__comm = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
 
         self.__min_quality = 8 # Qualité minimum de la mesure persue
-
-        
 
         self.__iter = 0
         self.__flag = True
@@ -56,21 +54,21 @@ class Lidar(Peripherique,Process):
     Methode principale pour le fonctionnement du LIDAR
     """
     def run(self):
+        # Traitement liés aux process
         signal.signal(signal.SIGTERM, self.signal_handler)
-
         print("[$] %s:%s : Process Intelligence actif"%(os.getppid(),os.getpid()))
-
         self.__sem_start.release()
 
+        # Boucle d'action
         while self.__flag:
+            
+            time.sleep(1)
             # Mettre ici les taches effectués par le lidar
 
-            self.__q_comm.put(item, block=True, timeout=None) 
+            #self.__q_comm.put(self.__comm["tourner_gauche"]) 
             # exemple pour mettre une commande dans la queue:
             # q_com.put(commandes["rot_ver_gauche"])
             # Voir le fichier commandes.json
-
-            pass
 
     """
     Permet de virer les données en dessous d'un seuil de qualité
@@ -92,7 +90,6 @@ class Lidar(Peripherique,Process):
         print("[*] Process LidarIntel est arrêté")
         self.__flag = False
 
-    
 
 """
     def __reax(self,ax):

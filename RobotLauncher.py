@@ -29,13 +29,13 @@ sem_start = mp.Semaphore(0)
 corps = CorpsRobot(q_com,q_info,sem_start)
 
 # On ajoute un lidar directement connecté au raspberry
-lidar= Lidar(q_com,q_info,sem_start)
+lidar= Lidar(q_com,sem_start)
         
 corps.start() # Commence le processus corps
 lidar.start() # idem intelligence
 
 print("[*] Corps PID %s"%(corps.pid))
-print("[*] Intel PID %s"%(intel.pid))
+print("[*] Intel PID %s"%(lidar.pid))
 
 # Attend l'initialisation des deux autres processus avant de passer des commandes
 sem_start.acquire()

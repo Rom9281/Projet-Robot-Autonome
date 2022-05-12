@@ -3,8 +3,10 @@ import serial, json
 
 class Peripherique(ABC):
 
-    def __init__(self,pin,baude_rate):
+    def __init__(self):
         self.__name = self.__class__.__name__
+
+        print(self.__name)
 
         # Configuration des peripheriques direct
         self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"

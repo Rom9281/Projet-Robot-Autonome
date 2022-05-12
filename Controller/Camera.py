@@ -6,7 +6,7 @@ from Model.Peripherique import Peripherique
 
 class Camera(Peripherique,Process):
     def __init__(self):
-        pass
+        super(Camera, self).__init__()
 
 def matrice_couleur(self,image,k):
     return image[:,:,k]

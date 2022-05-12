@@ -14,7 +14,6 @@ from multiprocessing import Process
 
 # from Model.Serializer import Serializer
 from Model.STM import STM
-from Model.Lidar import Lidar
 from Model.ServoMoteur import ServoMoteur
 from Model.Serializer import Serializer
 from Model.LED import LED
