@@ -6,8 +6,8 @@ from Model.Peripherique import Peripherique
 ## d'eviter les tests a chaque fois et de dire que l'on ne peut pas initialiser une carte si le port serie ne l'est pas 
 class Carte(Peripherique):
     
-    def __init__(self,pin,baude_rate):
-        super().__init__(pin,baude_rate)
+    def __init__(self):
+        super().__init__()
 
 
     """
@@ -22,7 +22,7 @@ class Carte(Peripherique):
             ret = True
 
         else:
-            print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
+            print("\n[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
 
         return ret
 
@@ -37,7 +37,7 @@ class Carte(Peripherique):
             ret = self._serial.read()
 
         else:
-            print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
+            print("\n[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
 
         return ret 
     

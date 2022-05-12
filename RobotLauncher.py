@@ -4,6 +4,7 @@ Agis pour le moment également comme l'interface graphique avec l'utilisateur
 """
 from ast import Import
 import multiprocessing as mp, keyboard,sys, json
+from Controller.Lidar import Lidar
 
 #sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
 #sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
@@ -13,11 +14,11 @@ sys.path.append(r'~/.local/lib/python3.7/site-packages' )
 
 # Bibliothèques personelles
 from Controller.CorpsRobot import CorpsRobot
-from Controller.IntelligenceRobot import IntelligenceRobot
 
 # Recuperation des commandes dans le path
 config_commandes_path = "/home/pi/Documents/Controller/commandes.json"
 commandes = json.load(open(config_commandes_path)) # récupère la config des periphériques dans le json
+
 
 flag = True
 q_com = mp.Queue() # queue contenant les commandes
@@ -26,10 +27,12 @@ q_info = mp.Queue() # queue contenant les informations
 sem_start = mp.Semaphore(0)
 
 corps = CorpsRobot(q_com,q_info,sem_start)
-intel = IntelligenceRobot(q_com,q_info,sem_start)
 
+# On ajoute un lidar directement connecté au raspberry
+lidar= Lidar(q_com,q_info,sem_start)
+        
 corps.start() # Commence le processus corps
-intel.start() # idem intelligence
+lidar.start() # idem intelligence
 
 print("[*] Corps PID %s"%(corps.pid))
 print("[*] Intel PID %s"%(intel.pid))
@@ -89,17 +92,15 @@ try:
             q_com.put(commandes["tirer"])
             sem_start.acquire()
         
-        
-
 
 except ImportError as e:
     print(f"[$] {e} : veuillez être root pour lancer le programme")
 
 # corps.terminate()
-intel.terminate()
+lidar.terminate()
 
 corps.join()
-intel.join()
+lidar.join()
 print("ENDED")
 
 

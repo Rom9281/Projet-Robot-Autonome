@@ -12,8 +12,6 @@ Description :  Modélisation du robot en entier
 import json, time,signal,os
 from multiprocessing import Process
 
-from Controller.Enums import Vitesse, Commande
-
 # from Model.Serializer import Serializer
 from Model.STM import STM
 from Model.Lidar import Lidar
@@ -41,18 +39,8 @@ class CorpsRobot(Process):
         self.__com = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
 
         # On configure la carte a laquelle va etre connecte les peripheriques
-        self.__stm = STM(
-            self.__config_periph["STM32"]["Pin"],
-            self.__config_periph["STM32"]["Baud"]
-            )
-        
+        self.__stm = STM()
 
-        # On ajoute un lidar directement connecté au raspberry
-        self.__lidar = Lidar(
-            self.__config_periph["Lidar"]["Pin"],
-            self.__config_periph["Lidar"]["Baud"]
-        )
-        
         # On ajoute les elements connectés au stm32
         self.__servo_moteur = ServoMoteur(self.__stm)
         self.__serializer = Serializer(self.__stm)
@@ -80,7 +68,7 @@ class CorpsRobot(Process):
             self.__sem_start.release()
 
             # Lecture des données
-            print(self.__lidar.getMeasure())
+            # print(self.__lidar.getMeasure())
 
             time.sleep(0.5)
     

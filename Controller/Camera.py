@@ -1,13 +1,12 @@
 ##Bibliothèques
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from Model.Capteur import Capteur
+import cv2,numpy as np,matplotlib.pyplot as plt
+from multiprocessing import Process
+from Model.Peripherique import Peripherique
 
-class Camera(Capteur):
+
+class Camera(Peripherique,Process):
     def __init__(self):
         pass
-
 
 def matrice_couleur(self,image,k):
     return image[:,:,k]

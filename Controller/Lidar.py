@@ -1,36 +1,40 @@
+"""
+Code pour le lidar:
+Maxime - Romain
+"""
+
+# Imports
+from multiprocessing.dummy import Process
+import matplotlib.pyplot as plt, json, signal
 from rplidar import RPLidar
-from Model.CapteurPeriph import CapteurPeriph
-import matplotlib.pyplot as plt
-import numpy as np,math
-import time
+
+# 
+from Model.Peripherique import Peripherique
 
 
-class Lidar(CapteurPeriph):
-    def __init__(self, pin, baude_rate):
+class Lidar(Peripherique,Process):
+    def __init__(self,q_comm,sem_start):
         super().__init__(pin, baude_rate)
+
+        self.__q_comm = q_comm # Queue de commande
+        self.__sem_start = sem_start # 
+
+        # Configuration des commandes:
+        self.__config_commandes_path = "/home/pi/Documents/Controller/commandes.json"
+        self.__com = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
 
         self.__min_quality = 8 # Qualité minimum de la mesure persue
 
+        
+
         self.__iter = 0
         self.__flag = True
-
-        self.__coord_init = [0,0]
-        self.__coord_actuelle = self.__coord_init
-        self.__orientation_actuelle = 0
         
-        """
-        if(self._serial):
-            print(self._getInfo())
-            flag =True
-            while flag:
-                try:
-                    flag=False
-                    self.displayIHM()
-                except:
-                    print("[$] Error, retrying")
-        """
-    
-    def _connect(self):
+    """
+    Permet la connection au lidar en utilisant la bibliotheque
+    Retourne un objet RPLidar ou None
+    """
+    def _connect(self) -> RPLidar:
         ret = None
 
         try:
@@ -44,10 +48,33 @@ class Lidar(CapteurPeriph):
     
     def _getInfo(self):
         return self._serial.get_info()
-    
+
     def _getHealth(self):
         return self._serial.get_health()
+    
+    """
+    Methode principale pour le fonctionnement du LIDAR
+    """
+    def run(self):
+        signal.signal(signal.SIGTERM, self.signal_handler)
 
+        print("[$] %s:%s : Process Intelligence actif"%(os.getppid(),os.getpid()))
+
+        self.__sem_start.release()
+
+        while self.__flag:
+            # Mettre ici les taches effectués par le lidar
+
+            self.__q_comm.put(item, block=True, timeout=None) 
+            # exemple pour mettre une commande dans la queue:
+            # q_com.put(commandes["rot_ver_gauche"])
+            # Voir le fichier commandes.json
+
+            pass
+
+    """
+    Permet de virer les données en dessous d'un seuil de qualité
+    """
     def __cleanData(self,data):
         clean_data = []
 
@@ -58,30 +85,16 @@ class Lidar(CapteurPeriph):
 
         return clean_data
     
-    def getMeasure(self):
-        self.__iter += 1
-        ret= ""
-        data = ""
-
-        try:
-            data = next(self._serial.iter_scans(max_buf_meas=200, min_len=130))
-
-        except:
-            print(f"[$] Erreur lidar : Mauvais bit de lancement - Nouvelle tentative")
-
-        data = self.__cleanData(data) # Nettoie les données 
-        
-        # joining all the tuples
-        ret = list(map(self.__join_tuple_string, data))
-        return ret
-    
-    # function that converts tuple to string
-    def __join_tuple_string(strings_tuple) -> str:
-        return ','.join(strings_tuple)
-
-    
-
     """
+    Permet de gerer l'interruption du programme LidarIntel
+    """
+    def signal_handler(self,signum,frame):
+        print("[*] Process LidarIntel est arrêté")
+        self.__flag = False
+
+    
+
+"""
     def __reax(self,ax):
         ax.grid(True)
         ax.spines['left'].set_position('zero')
@@ -130,4 +143,4 @@ class Lidar(CapteurPeriph):
             R.append(coord[1])
 
         return X,Y,Theta,R
-    """
+"""
