@@ -57,22 +57,21 @@ class Lidar(Peripherique):
 
         return ret
     
-    def envoyerMesures(self):
+    def envoyerMesures(self) -> str:
         new_list = []
-        self.__flag = False
+        ret = ""
+        self.__flag = True
         
         while self.__flag:
-            try:
-                serie = self.__recupererMesures()[0] # Recupere une serie de mesures
-                self.__flag = True
+            try: 
+                for mesure in self.__cleanData(self.__recupererMesures()[0]): # Nettoie la serie et prend chaque element (Le nettoyage passe les int en str)
+                    new_list.append(','.join(mesure))
+                    ret = ':'.join(new_list)
+                self.__flag = False
             except:
                 print("[$] RPLidarException : Starting Byte Error - Nouvelle Tentative")
-
-
-        for mesure in self.__cleanData(serie): # Nettoie la serie et prend chaque element (Le nettoyage passe les int en str)
-            new_list.append(','.join(mesure))
-        
-        return ':'.join(new_list)
+    
+        return ret
 
     """
     Permet de virer les données en dessous d'un seuil de qualité
