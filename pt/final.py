@@ -322,7 +322,7 @@ def maj_droite_c():
           M[coord_actuelle[0]-i][coord_actuelle[1]+16]=1
 
 def maj_droite_d():
-   if orientation_actuelle == 0:
+    if orientation_actuelle == 0:
         for i in range(6):
           M[coord_actuelle[0]+16][coord_actuelle[1]+i+6]=1
     elif orientation_actuelle == 1:

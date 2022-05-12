@@ -43,7 +43,7 @@ class CorpsRobot(Process):
         self.__lidar = Lidar(self.__q_lidar)
 
         # On ajoute les elements connectés au stm32
-        self.__servo_moteur = ServoMoteur(self.__stm)
+        self.__servo_moteur = ServoMoteur(self.__stm,0)
         self.__serializer = Serializer(self.__stm)
         self.__led = LED(self.__stm)
     
