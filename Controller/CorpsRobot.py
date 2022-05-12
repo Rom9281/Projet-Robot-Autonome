@@ -17,15 +17,16 @@ from Model.STM import STM
 from Model.ServoMoteur import ServoMoteur
 from Model.Serializer import Serializer
 from Model.LED import LED
+from Model.Lidar import Lidar
 
 class CorpsRobot(Process):
     
-    def __init__(self,q_com,q_info,sem_start):
+    def __init__(self,q_com,q_lidar,sem_start):
         super(CorpsRobot, self).__init__()
 
         # Multiprocessing
         self.__q_com = q_com
-        self.__q_info = q_info
+        self.__q_lidar = q_lidar
         self.__sem_start = sem_start
         self.__flag = True
 
@@ -39,6 +40,7 @@ class CorpsRobot(Process):
 
         # On configure la carte a laquelle va etre connecte les peripheriques
         self.__stm = STM()
+        self.__lidar = Lidar(self.__q_lidar)
 
         # On ajoute les elements connectés au stm32
         self.__servo_moteur = ServoMoteur(self.__stm)
@@ -65,6 +67,8 @@ class CorpsRobot(Process):
             self.gererCommande(commande)
 
             self.__sem_start.release()
+
+            print(self.__lidar.envoyerMesures())
 
             # Lecture des données
             # print(self.__lidar.getMeasure())

@@ -12,8 +12,6 @@ taille_map=10
 distance_min_mvmt=1
 
 
-
-
 def virage_droite():
     orientation(1)
     print('virage droite')

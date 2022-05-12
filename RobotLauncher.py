@@ -2,9 +2,9 @@
 Programme de lancement principal du robot,
 Agis pour le moment également comme l'interface graphique avec l'utilisateur
 """
-from ast import Import
-import multiprocessing as mp, keyboard,sys, json
-from Controller.Lidar import Lidar
+
+import multiprocessing as mp, keyboard,sys, json, time
+from Controller.IntelRobot import IntelligenceRobot
 
 #sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
 #sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
@@ -22,20 +22,20 @@ commandes = json.load(open(config_commandes_path)) # récupère la config des pe
 
 flag = True
 q_com = mp.Queue() # queue contenant les commandes
-q_info = mp.Queue() # queue contenant les informations
+q_lidar = mp.Queue() # queue contenant les informations
 
 sem_start = mp.Semaphore(0)
 
-corps = CorpsRobot(q_com,q_info,sem_start)
+corps = CorpsRobot(q_com,q_lidar,sem_start)
 
 # On ajoute un lidar directement connecté au raspberry
-lidar= Lidar(q_com,sem_start)
+intel= IntelligenceRobot(q_com,q_lidar,sem_start)
         
 corps.start() # Commence le processus corps
-lidar.start() # idem intelligence
+intel.start() # idem intelligence
 
 print("[*] Corps PID %s"%(corps.pid))
-print("[*] Intel PID %s"%(lidar.pid))
+print("[*] Intel PID %s"%(intel.pid))
 
 # Attend l'initialisation des deux autres processus avant de passer des commandes
 sem_start.acquire()
@@ -92,15 +92,17 @@ try:
             q_com.put(commandes["tirer"])
             sem_start.acquire()
         
+        time.sleep(0.2)
+        
 
 except ImportError as e:
     print(f"[$] {e} : veuillez être root pour lancer le programme")
 
 # corps.terminate()
-lidar.terminate()
+intel.terminate()
 
 corps.join()
-lidar.join()
+intel.join()
 print("ENDED")
 
 
