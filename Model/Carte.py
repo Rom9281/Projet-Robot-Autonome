@@ -34,7 +34,7 @@ class Carte(Peripherique):
         ret = False
 
         if(self._serial):
-            ret = self._serial.read()
+            ret = self._serial.readline()
 
         else:
             print("\n[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
@@ -46,8 +46,7 @@ class Carte(Peripherique):
     """
     def valider(self,commande):
         read = self.lireCommande() # On lit la commande
-        read = read[:-2] # On enleve la fin
-        liste = read.split(":") # on parse la liste 
+        liste = read.split() # on parse la liste 
 
-        return (liste[0]==commande)&(liste[1]=="OK")
+        return (liste[0]==commande) & (liste[-1]=="ok")
 
