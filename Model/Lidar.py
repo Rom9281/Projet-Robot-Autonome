@@ -53,7 +53,8 @@ class Lidar(Peripherique):
 
         for i, scan in enumerate(self._serial.iter_scans()):
             ret.append(scan)
-            break 
+            if i>0:
+                break 
 
         return ret
     
@@ -64,12 +65,14 @@ class Lidar(Peripherique):
         
         while self.__flag:
             try: 
+                print("OK")
+                self.__flag = False
                 for mesure in self.__cleanData(self.__recupererMesures()[0]): # Nettoie la serie et prend chaque element (Le nettoyage passe les int en str)
                     new_list.append(','.join(mesure))
                     ret = ':'.join(new_list)
-                self.__flag = False
+                    print("Time : {}")
             except:
-                print("[$] RPLidarException : Starting Byte Error - Nouvelle Tentative")
+                print("\n[$] RPLidarException : Starting Byte Error - Nouvelle Tentative")
     
         return ret
 
