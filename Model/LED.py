@@ -20,9 +20,6 @@ class LED(PeripheriqueCarte):
         self.__carte.ecrireCommande(self._creerCommande())
 
 
-if __name__ == "__main__":
-
-    testLed = LED(carte = Carte())
     
 
     
