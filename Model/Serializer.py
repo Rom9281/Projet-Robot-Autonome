@@ -13,39 +13,41 @@ class Mouvement(enum.Enum):
 class Serializer(PeripheriqueCarte):
     
     def __init__(self,carte):
-        # super().__init__(pin,baude_rate)
-        super().__init__(carte,"MVTMTR","0","0")
-        self.mouvement = Mouvement
+        super().__init__(carte,"MVTMTR",0,0)
+        self.mouvements = Mouvement
 
     
-    def avancer(self,distance):
+    def avancer(self,distance:int):
 
         self._arg1 = self.mouvement.AVANCER.value
         self._arg2 = distance
 
         self._carte.ecrireCommand(self._creerCommande())
     
-    def reculer(self,distance):
+    def reculer(self,distance:int):
 
         self._arg1 = self.mouvement.RECULER.value
         self._arg2 = distance
 
         self._carte.ecrireCommand(self._creerCommande())
     
-    def tournerDroite(self,angle):
+    def tournerDroite(self,angle:int):
 
         self._arg1 = self.mouvement.TOURNER_DROITE.value
         self._arg2 = angle
 
         self._carte.ecrireCommand(self._creerCommande())
     
-    def tournerGauche(self,angle):
+    def tournerGauche(self,angle:int):
     
         self._arg1 = self.mouvement.TOURNER_GAUCHE.value
         self._arg2 = angle
 
         self._carte.ecrireCommand(self._creerCommande())
 
+    
+    def getCommandeValidation(self):
+        self._carte.valider(self._commande)
     """
     CODE SI LE SERIALISER EST BRANCHE DIRECTEMENT AU RASPBERRY
     
