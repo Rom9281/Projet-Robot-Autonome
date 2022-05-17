@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robot Controler</title>
+  </head>
+  <body>
+    <h1> Bienvenu sur la paneau de controle du Robot </h1>
+
+    <div> 
+        <p>
+            Ceci est la page d'acceuille.
+            Ici vous allez pouvoir decider du fonctionnement du robot.
+            Veuillez choisir entre les 2 modes de fonctionnements
+        </p>
+    </div>
+
+    <div>
+
+        <a href="/run/manuel"><input type="button" value="Mode Manuelle" ></a>
+        <a href="/run/automatic"><input type="button" value="Mode Automatique" ></a>
+  
+    </div>
+    
+  </body>
+
+<script type="text/javascript" src="{{url_for('static', filename='js/index.js')}}"></script>
+ 
+</html>

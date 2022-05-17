@@ -9,7 +9,7 @@ class Ultrason(PeripheriqueCarte):
         super().__init__(carte, codeCommande = "USNDST", arg1 = position)
         self.distance = inf
     
-    def recupererDistance(self) -> int:
+    def recupererDistance(self) -> bool:
         
         self._carte.ecrireCommand(self.creerCommande())
         valideAction = self.validationCommande()
@@ -18,5 +18,5 @@ class Ultrason(PeripheriqueCarte):
             if (mesureDistance != ""):
                 self.distance = int(mesureDistance.split()[-1])
 
-        return self.distance
+        return valideAction
 

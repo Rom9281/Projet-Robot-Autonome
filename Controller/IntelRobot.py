@@ -36,12 +36,12 @@ class IntelligenceRobot(Process):
 
         self.__sem_start.release()
 
-        while True:
+        while self.__flag:
             time.sleep(2)
 
         #premier_tour()
 
-        #deuxieme_tour()
+        #deuxième_tour()
 
             
     

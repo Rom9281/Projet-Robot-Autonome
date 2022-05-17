@@ -8,7 +8,7 @@ from Model.Carte import Carte
 class ServoMoteur(PeripheriqueCarte) :
     
     def __init__(self,carte, axe = 0) -> None:
-        # axe correspond au servo Horizontal ou vertical
+        # axe correspond au servo Horizontal(0) ou vertical(1)
         super().__init__(carte,"PSTSRV",axe ,0)  
         self.__angle = 0
         
@@ -19,7 +19,7 @@ class ServoMoteur(PeripheriqueCarte) :
         return self._arg1
 
     
-    def mouvement(self, angle : int) -> bool:
+    def rotation(self, angle : int) -> bool:
         # angle correspond a l'angle que l'on veux donner [0 : 180]
         valideMouvement = False
         if ( 0 <= angle <= 180):
@@ -32,7 +32,7 @@ class ServoMoteur(PeripheriqueCarte) :
 
    
     # fonctions petit mouvement correspond a un mouvement d'un valeur predefinie : 5°
-    def petitMouvAjout(self) -> bool:
+    def petiteRotationAjout(self) -> bool:
         valideMouvement = False
         if (self.__angle + 5 <=180 ):
             self.__angle += 5
@@ -42,7 +42,7 @@ class ServoMoteur(PeripheriqueCarte) :
         
         return valideMouvement
 
-    def petitMouvRetire(self) -> bool:
+    def petiteRotationRetire(self) -> bool:
         valideMouvement = False
         if (self.__angle - 5 >= 0 ):
             self.__angle -= 5

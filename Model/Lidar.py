@@ -18,7 +18,7 @@ class Lidar(Peripherique):
         self.__q_lidar = q_lidar # Queue donnant les informations du lidar
 
         # Configuration des commandes:
-        self.__config_commandes_path = "/home/pi/Documents/Controller/commandes.json"
+        self.__config_commandes_path = "./Controller/commandes.json"
         self.__comm = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
 
         self.__min_quality = 8 # Qualité minimum de la mesure persue
@@ -67,8 +67,8 @@ class Lidar(Peripherique):
             try: 
                 t1 = time.time()
                 self.__flag = False
-                    ret = self.__cleanData(self.__recupererMesures())
-                    ret = ':'.join(ret)
+                ret = self.__cleanData(self.__recupererMesures())
+                ret = ':'.join(ret)
                 t2 = time.time()
                 print(f"Time : {t2-t1}")
             except:

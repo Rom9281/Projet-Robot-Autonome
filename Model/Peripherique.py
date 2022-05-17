@@ -9,7 +9,7 @@ class Peripherique(ABC):
         print(self.__name)
 
         # Configuration des peripheriques direct
-        self.__config_periph_path = "/home/pi/Documents/Controller/configPeriph.json"
+        self.__config_periph_path = "./Controller/configPeriph.json"
         self.__config_periph = json.load(open(self.__config_periph_path)) # récupère la config des periphériques dans le json
         
         # Configuration des pins

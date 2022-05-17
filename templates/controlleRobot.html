@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robot Controler</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/controlleRobot.css')}}">
+  </head>
+  <body>
+    <h1> Mode manuel </h1>
+
+    <div> 
+        <h2>Bienvenu sur votre panneau de controlle  de votre robot.</h2>
+        <p>
+            Ici vous allez retrouver toutes les informations vous permettant de controller votre robot. <br>
+            Mais egalement le retour de vos capteurs.
+
+
+        </p>
+    </div>
+
+    <div class="controlleRobot">
+        <div class="ControllerUsAv">
+          <p> Distance avant: {{distance}} cm</p>
+          <button type="button" onclick="mesureDistanceAvant()">Mesure distance</button>
+        </div>
+        <div class="retourVideo">
+            <img src="{{ url_for('video_feed') }}" height="200">
+        </div>
+        <div class="ControllerUsAr">
+          <p> Distance arriere: {{distance}} cm</p>
+          <button type="button" onclick="mesureDistanceArriere()">Mesure distance</button>
+        </div>
+        <div class="controllerServo">
+          <h5 > Controller visé</h5>
+            <button class="custom a" onclick="bas()" >&#x25BC</a>
+            <button class="custom b" onclick="droite()">&#x25B6</a>
+            <button class="custom x" onclick="gauche()">&#x25C0</a>
+            <button class="custom y" onclick="haut()">&#x25B2</a>
+        </div>
+
+        <div class="ButtonContolle">
+          <button id="start" type="button" onclick="start()"> Start</button>
+          <button id="stop" type="button" onclick="stop()"> Stop</button>
+        </div>
+
+        
+        <div class="ControllerLampe">
+          <button type="button" onclick="tireLampe()">Tire Lampe (t)</button>
+          <button type="button" onclick="allumerLampe()">Allumer Lampe (t)</button>
+          <button type="button" onclick="eteindreLampe()">Eteindre Lampe (t)</button>
+          
+        </div>
+        
+        <div class="ControllerHP">
+          <button type="button" onclick="klaxon()">Klaxon (c)</button>
+          
+        </div>
+
+        <div class="controllerMouvement">
+          <h5>Controller deplacement</h5>
+          <button class="custom a" onclick="avancer()">&#x25BC</a>
+          <button class="custom b" onclick="rotDroite()">&#x25B6</a>
+          <button class="custom x" onclick="rotGauche()">&#x25C0</a>
+          <button class="custom y" onclick="recule()">&#x25B2</a>
+        </div>
+
+        <div class="retourLidar">
+          <img src="{{ url_for('video_feed') }}" height="200">
+      </div>
+    </div>
+
+
+  </body>
+
+
+<script type="text/javascript" src="{{url_for('static', filename='js/controlleRobot.js')}}"></script>
+ 
+</html>

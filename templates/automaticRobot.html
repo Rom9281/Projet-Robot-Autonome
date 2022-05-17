@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robot Controler</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/controlleRobot.css')}}">
+  </head>
+  <body>
+    <h1> Mode automatique </h1>
+
+    <div> 
+        <h2>Bienvenu sur votre panneau de controlle  de votre robot.</h2>
+        <p>
+           Ici vous pourrez voir l'evolution du robot dans sont environement grace a ca camera embarquée
+
+
+        </p>
+    </div>
+
+    <div class="controlleRobot">
+        <div class="ControllerUsAv">
+          <p> Distance avant: {{distance}} cm</p>
+          
+        </div>
+        <div class="retourVideo">
+            <img src="{{ url_for('video_feed') }}" height="200">
+        </div>
+        <div class="ControllerUsAr">
+          <p> Distance arriere: {{distance}} cm</p>
+          
+        </div>
+
+        <div class="ButtonContolle">
+            <button id="start" type="button" onclick="start()"> Start</button>
+            <button id="stop" type="button" onclick="stop()"> Stop</button>
+        </div>
+
+
+        <div class="retourLidar">
+          <img src="{{ url_for('video_feed') }}" height="200">
+      </div>
+    </div>
+
+
+  </body>
+
+
+<script type="text/javascript" src="{{url_for('static', filename='js/automatiqueRobot.js')}}"></script>
+ 
+</html>
