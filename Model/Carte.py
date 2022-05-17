@@ -14,7 +14,7 @@ class Carte(Peripherique):
     Permet d'ecrire une commande pour le peripherique
     Retourne 
     """
-    def ecrireCommand(self,command):
+    def ecrireCommand(self,command) -> bool:
         ret = False
 
         if(self._serial):
@@ -30,8 +30,8 @@ class Carte(Peripherique):
     Permet de lire la commande envoyé par le peripherique
     Retourne True si jamais c'est ok
     """
-    def lireCommande(self):
-        ret = False
+    def lireCommande(self) -> str:
+        ret = ""
 
         if(self._serial):
             ret = self._serial.readline()
@@ -44,7 +44,7 @@ class Carte(Peripherique):
     """
     Permet de valider le faite que la commande ait bien été envoyé et effectuée
     """
-    def valider(self,commande):
+    def valider(self,commande) -> bool:
         read = self.lireCommande() # On lit la commande
         liste = read.split() # on parse la liste 
 
