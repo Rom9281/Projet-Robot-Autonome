@@ -49,14 +49,10 @@ class Lidar(Peripherique):
         return self._serial.get_health()
     
     def __recupererMesures(self) -> list:
-        ret = []
+        for scan in self._serial.iter_scans():
+            break 
 
-        for i, scan in enumerate(self._serial.iter_scans()):
-            ret = scan
-            if i>0:
-                break 
-
-        return ret
+        return scan
     
     def envoyerMesures(self) -> str:
         new_list = []

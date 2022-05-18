@@ -6,7 +6,7 @@ port = 3080
 address = ("", port)
 
 server = http.server.HTTPServer
-server.
+
 handler = http.server.CGIHTTPRequestHandler
 handler.cgi_directories = ["/view"]
 
