@@ -35,6 +35,8 @@ class Camera(Process):
         self.__sem_start.release()
 
         while self.__flag:
+            time.sleep(0.1)
+
             ret, frame = self.cap.read()
 
             if ret == True:
@@ -48,28 +50,25 @@ class Camera(Process):
                         self.__etape += 1
                     else:
                         # Coder la rotation normale pour detecter le cercle
-                        #self.__queue_commande()
-                        pass
+                        self.__queue_commande.put(f'{self.__commandes["automatique"]}:0')
+
                 elif self.__etape == 2:
                     if pas_centre:
                         #mettre les commandes pour ajuster
                         # a l'aide de direction
                         if direction:
                             # le cerlcle est a droite
-                            pass
+                            self.__queue_commande.put(f'{self.__commandes["p_rot_hor_droite"]}:0')
                         else:
-                            # le cercle est a gauche
-                            pass
+                            self.__queue_commande.put(f'{self.__commandes["p_rot_hor_gauche"]}:0')
                     else:
                         self.__etape = 3
 
                 elif self.__etape == 3:
                     # envoyer la commande en degree
-                    self.__queue_commande.put(f'{self.__commandes["rotation_verticale"]}:{degre}')
-                    time.sleep(1)
+                    self.__queue_commande.put(f'{self.__commandes["rotation_verticale"]}:{180-degre}')
                     self.__etape = 1
                     
-            
             else:
                 print("[$] Caméra non détéctée")
                 self.__flag = False

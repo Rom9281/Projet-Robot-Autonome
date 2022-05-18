@@ -1,6 +1,5 @@
 from http.client import FAILED_DEPENDENCY
 
-from sympy import false
 from Model.PeripheriqueCarte import PeripheriqueCarte
 from Model.Carte import Carte
 
@@ -11,13 +10,13 @@ class ServoMoteur(PeripheriqueCarte) :
         # axe correspond au servo Horizontal(0) ou vertical(1)
         super().__init__(carte,"PSTSRV",axe ,0)  
         self.__angle = 0
+        self.__gauche = True
         
     def getAngle(self)-> int:
         return self.__angle
     
     def getOrientation(self)-> int:
         return self._arg1
-
     
     def rotation(self, angle : int) -> bool:
         # angle correspond a l'angle que l'on veux donner [0 : 180]
@@ -29,6 +28,20 @@ class ServoMoteur(PeripheriqueCarte) :
             valideMouvement = self.validationCommande()
         return valideMouvement
     
+    def auto(self):
+        if (self.__gauche == True) :
+            if not (self.rotationGauche(5)):
+                self.__gauche = False
+        else:
+            if not (self.rotationDroite(5)):
+                self.__gauche = True
+
+    
+    def rotationGauche(self,angle : int) -> bool:
+        return self.rotation(self.__angle+angle)
+    
+    def rotationDroite(self,angle : int) -> bool:
+        return self.rotation(self.__angle-angle)
 
    
     # fonctions petit mouvement correspond a un mouvement d'un valeur predefinie : 5°

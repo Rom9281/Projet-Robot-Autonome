@@ -134,7 +134,6 @@ class IntelligenceRobot(Process):
         self.__q_com.put(f'{self.__commmande["avancer"]}:5')
 
 
-
     #           fonction de base
 
     def orientation(self,p):
@@ -269,6 +268,7 @@ class IntelligenceRobot(Process):
     def premier_tour(self):
         self.avancer()
         while self.coord_actuelle != self.coord_init :
+            time.sleep(0.1)
             if self.obstacle_gauche():
                 self.maj_obstacle_gauche()
                 if self.obstacle_avant():
@@ -287,6 +287,7 @@ class IntelligenceRobot(Process):
     def deuxieme_tour(self):
         coord_utile=[0,0]
         for i in range((self.taille_map-2)//self.distance_decalage-1):
+            time.sleep(0.1)
             coord_utile=self.mise_en_position()
             self.exploration_allez(coord_utile)
             self.exploration_retour(coord_utile)

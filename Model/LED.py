@@ -1,5 +1,4 @@
 
-from sympy import N
 from Model.PeripheriqueCarte import PeripheriqueCarte
 from Model.Carte import Carte
 

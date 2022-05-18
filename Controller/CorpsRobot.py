@@ -114,17 +114,27 @@ class CorpsRobot(Process):
         
 
         # rotation tourelle
+        elif(commande[0] == self.commandes["automatique"]):
+            messageValidation = self.__servo_horizontal.auto()
+
         elif(commande[0] == self.commandes["rotation_horizontale"]):
             messageValidation = self.__servo_horizontal.rotation(commande[1])
         
         elif(commande[0] == self.commandes["rotation_verticale"]):
            messageValidation =  self.__servo_vertical.rotation(commande[1])
         
-        elif(commande[0] == self.commandes["rot_hor_gauche"]):
+        elif(commande[0] == self.commandes["p_rot_hor_gauche"]):
             messageValidation = self.__servo_horizontal.petiteRotationAjout()
         
-        elif(commande[0] == self.commandes["rot_hor_droite"]):
+        elif(commande[0] == self.commandes["p_rot_hor_droite"]):
             messageValidation = self.__servo_horizontal.petiteRotationRetire()
+        
+        elif(commande[0] == self.commandes["rot_hor_gauche"]):
+            messageValidation = self.__servo_horizontal.rotationGauche(commande[1])
+        
+        elif(commande[0] == self.commandes["rot_hor_droite"]):
+            messageValidation = self.__servo_horizontal.rotationDroite(commande[1])
+        
         
         elif(commande[0] == self.commandes["rot_ver_droite"]):
             messageValidation = self.__servo_vertical.petiteRotationAjout()
