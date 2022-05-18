@@ -1,4 +1,4 @@
-import os, time, signal
+import os, time, signal, json
 from multiprocessing import Process
 import numpy as np
 
@@ -11,6 +11,11 @@ class IntelligenceRobot(Process):
         self.__q_lidar = q_lidar
         self.__sem_start = sem_start
         self.__flag = True
+
+        # Configuration des commandes
+        self.__config_commandes_path = "./Controller/commandes.json"
+        self.__commandes = json.load(open(self.__config_commandes_path)) # récupère la config des périphériques dans le json
+
         
         # Variable de localisation
         self.coord_init = [1,1]
@@ -33,9 +38,6 @@ class IntelligenceRobot(Process):
         print("[$] %s:%s : Process Intelligence actif"%(os.getppid(),os.getpid()))
 
         self.__sem_start.release()
-
-        while self.__flag:
-            time.sleep(2)
 
         self.premier_tour()
 
@@ -110,15 +112,16 @@ class IntelligenceRobot(Process):
 
     def virage_droite(self):
         self.orientation(1)
-        #print('virage droite')
+        self.__q_com.put(f'{self.__commmande["tourner_droite"]}:90')
 
 
     def virage_gauche(self):
         self.orientation(-1)
-        # print('virage gauche')
+        self.__q_com.put(f'{self.__commmande["tourner_gauche"]}:90')
 
 
     def avancer(self):
+
         if self.orientation_actuelle == 0:
             self.coord_actuelle[1]+=1
         elif self.orientation_actuelle == 1:
@@ -127,8 +130,8 @@ class IntelligenceRobot(Process):
             self.coord_actuelle[1]-=1
         else :
             self.coord_actuelle[0]-=1
-        #   print('avance')
-        #  print(coord_actuelle)
+
+        self.__q_com.put(f'{self.__commmande["avancer"]}:5')
 
 
 
@@ -143,22 +146,7 @@ class IntelligenceRobot(Process):
             self.orientation_actuelle += p
         return
 
-    def premier_tour(self):
-        self.avancer()
-        while self.coord_actuelle != self.coord_init :
-            if self.obstacle_gauche():
-                self.maj_obstacle_gauche()
-                if self.obstacle_avant():
-                    self.maj_obstacle_avant()
-                    self.virage_droite()
-                    self.avancer()
-                else :
-                    self.avancer()
-            else:
-                self.virage_gauche()
-                self.avancer()
-        self.taille_map=self.fond()
-        return 
+    
 
 
     def mise_en_position(self):
@@ -277,6 +265,24 @@ class IntelligenceRobot(Process):
         while self.obstacle_avant()==False:
             self.avancer()
         return
+
+    def premier_tour(self):
+        self.avancer()
+        while self.coord_actuelle != self.coord_init :
+            if self.obstacle_gauche():
+                self.maj_obstacle_gauche()
+                if self.obstacle_avant():
+                    self.maj_obstacle_avant()
+                    self.virage_droite()
+                    self.avancer()
+                else :
+                    self.avancer()
+            else:
+                self.virage_gauche()
+                self.avancer()
+
+        self.taille_map=self.fond()
+        return 
 
     def deuxieme_tour(self):
         coord_utile=[0,0]

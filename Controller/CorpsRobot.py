@@ -43,7 +43,6 @@ class CorpsRobot(Process):
         # On configure la carte a laquelle va être connecte les périphériques
         self.__stm = STM()
         
-        self.__camera = Camera
         self.__lidar = Lidar(self.__queue_info)
 
         # On ajoute les elements connectés au stm32

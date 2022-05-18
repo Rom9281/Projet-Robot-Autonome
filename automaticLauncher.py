@@ -7,14 +7,7 @@ import multiprocessing as mp, keyboard,sys, json, time
 from Controller.Camera import Camera
 from Controller.IntelRobot import IntelligenceRobot
 
-#sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
-#sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Controller' )
-#sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\View' )
-
-# sys.path.append(r'~/.local/lib/python3.7/site-packages' )
-
 # Bibliothèques personnelles
-
 
 """
 Problème de Kill de process
@@ -54,7 +47,6 @@ def lauchAuto():
     config_commandes_path = "./Controller/commandes.json"
     commandes = json.load(open(config_commandes_path)) # récupère la config des périphériques dans le json
 
-    
     flag = True
             
     corps.start() # Commence le processus corps
@@ -65,7 +57,6 @@ def lauchAuto():
     sem_start.acquire()
     sem_start.acquire()
     sem_start.acquire()
-
     
     # try:
     #     while flag: # Tant qu'aucun signal d’arrêt n'est actif
@@ -134,7 +125,9 @@ def stopAuto():
     queue_commande.put("STOP")
     corps.terminate()
     intel.terminate()
+    camera.terminate()
 
     corps.join()
     intel.join()
+    camera.join()
     print("ENDED")

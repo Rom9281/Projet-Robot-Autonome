@@ -1,10 +1,9 @@
 ##Bibliothèques
-import cv2,numpy as np,matplotlib.pyplot as plt,signal,os, math,json, time
+import cv2 ,numpy as np,matplotlib.pyplot as plt,signal,os, math,json, time
 from multiprocessing import Process
-from Model.Peripherique import Peripherique
 
 
-class Camera(Peripherique,Process):
+class Camera(Process):
     def __init__(self,queue_commande, queue_info,sem_start):
         super(Camera, self).__init__()
 
@@ -170,7 +169,7 @@ class Camera(Peripherique,Process):
         imax = np.max(c[:,:,0])
         jmin = np.min(c[:,:,1])
         jmax = np.max(c[:,:,1])
-        petite_image =image_seuil[jmin:jmax+1,imin:imax+1]
+        petite_image = self.image_seuil[jmin:jmax+1,imin:imax+1]
         res = sum(sum(petite_image == 0))
         return res
         
@@ -187,7 +186,7 @@ class Camera(Peripherique,Process):
         p=self.perimetre(c)
         a=self.aire_v3(c,image)
         r=np.sqrt(self.aire_v3(c,image)/np.pi)
-        res = (self.circularite(c,image) >= seuil_circularite) and (self.aire_v3(c,image_seuil)>2000) and (perimetre(c)>300)  and (abs(2*(imax-imin)+2*(jmax-jmin) - 8*np.sqrt(aire_v3(c,image_seuil)/np.pi)) < 20 )
+        res = (self.circularite(c,image) >= seuil_circularite) and (self.aire_v3(c,self.image_seuil)>2000) and (self.perimetre(c)>300)  and (abs(2*(imax-imin)+2*(jmax-jmin) - 8*np.sqrt(self.aire_v3(c,self.image_seuil)/np.pi)) < 20 )
         #((circularite(c,image_seuil) >= seuil_circularite) and (aire_v3(c,image_seuil)>2000) and (perimetre(c)>300) and (abs(2*(imax-imin)+2*(jmax-jmin) - 8*np.sqrt(aire_v3(c,image_seuil)/np.pi)) < 20 ))
         return res
         
