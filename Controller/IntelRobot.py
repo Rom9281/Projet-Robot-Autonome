@@ -13,24 +13,19 @@ class IntelligenceRobot(Process):
         self.__flag = True
         
         # Variable de localisation
-        self.coord_init = [11,14]
-        self.coord_actuelle = [9,10]
+        self.coord_init = [1,1]
+        self.coord_actuelle = [1,1]
         self.orientation_actuelle = 0
-        self.taille_map=10000
-        self.distance_min_mvmt_g=6
-        self.distance_min_mvmt_d=12
-        self.compteur_exploration=1
-        self.distance_decalage=12
-
+        self.distance_decalage = 2
+        self.compteur_exploration = 1
+        self.taille_map=1000
+        self.distance_min_mvmt=1
         self.qualite_min = 8
         self.distance_min=450
 
-
-        # Matrice
         self.M=np.zeros((self.taille_map,self.taille_map)) 
-        self.M[0,]=1
-        self.M[: 1]=1
-
+        self.M[0][1]=1
+        self.M[1][0]=1
         
     def run(self):
         signal.signal(signal.SIGTERM, self.signal_handler)
@@ -114,12 +109,12 @@ class IntelligenceRobot(Process):
     #      Recuperation des fonctions de base (avancer,tourner,...)
 
     def virage_droite():
-        orientation(1)
+        self.orientation(1)
         #print('virage droite')
 
 
     def virage_gauche():
-        orientation(-1)
+        self.orientation(-1)
         # print('virage gauche')
 
 
@@ -149,49 +144,49 @@ class IntelligenceRobot(Process):
         return
 
     def premier_tour(self):
-        avancer()
+        self.avancer()
         while self.coord_actuelle != self.coord_init :
-            if obstacle_gauche():
-                maj_obstacle_gauche()
-                if obstacle_avant():
-                    maj_obstacle_avant()
-                    virage_droite()
-                    avancer()
+            if self.obstacle_gauche():
+                self.maj_obstacle_gauche()
+                if self.obstacle_avant():
+                    self.maj_obstacle_avant()
+                    self.virage_droite()
+                    self.avancer()
                 else :
-                    avancer()
+                    self.avancer()
             else:
-                virage_gauche()
-                avancer()
-        self.taille_map=fond()
+                self.virage_gauche()
+                self.avancer()
+        self.taille_map=self.fond()
         return 
 
 
     def mise_en_position(self):
         if self.compteur_exploration == 1:
-            virage_droite()
-            virage_droite()
+            self.virage_droite()
+            self.virage_droite()
         else :
-            virage_gauche()
+            self.virage_gauche()
         while self.coord_actuelle[0]!=self.coord_init[0]+self.compteur_exploration*self.distance_decalage:
-            if obstacle_droite():
-                maj_obstacle_droite()
-                if obstacle_avant():
-                    maj_obstacle_avant()
-                    virage_gauche()
-                    avancer()
+            if self.obstacle_droite():
+                self.maj_obstacle_droite()
+                if self.obstacle_avant():
+                    self.maj_obstacle_avant()
+                    self.virage_gauche()
+                    self.avancer()
                 else: 
-                    avancer()
+                    self.avancer()
             else:
-                virage_droite()
-                avancer()
-        virage_gauche()
+                self.virage_droite()
+                self.avancer()
+        self.virage_gauche()
         return np.copy(self.coord_actuelle)
 
     def obstacle_fond(self):
         for i in range(self.coord_actuelle[0]-1+self.distance_min_mvmt,self.coord_actuelle[0]+self.distance_min_mvmt):
             ymin=np.copy(taille_map)
             for j in range(ymin//2,ymin):
-                if M[i][j]==1:
+                if self.M[i][j]==1:
                     if ymin>j:
                         ymin=j
         return ymin
@@ -244,50 +239,50 @@ class IntelligenceRobot(Process):
         self.virage_gauche()
         self.avancer()
         while self.obstacle_droite():
-            maj_obstacle_droite()
-            avancer()
+            self.maj_obstacle_droite()
+            self.avancer()
 
-        virage_droite()
-        avancer()
+        self.virage_droite()
+        self.avancer()
 
-        while obstacle_droite():
-            maj_obstacle_droite()
-            avancer()
-        virage_droite()
-        avancer()
+        while self.obstacle_droite():
+            self.maj_obstacle_droite()
+            self.avancer()
+        self.virage_droite()
+        self.avancer()
         while self.coord_actuelle[0]!=x:
-            avancer()
-        virage_gauche()
+            self.avancer()
+        self.virage_gauche()
         return
 
     def exploration_allez(self,coord):
-        avancer()
-        while self.coord_actuelle[1]<obstacle_fond()-1:
-            if obstacle_avant():
-                maj_obstacle_avant()
-                contournement(coord[0])
+        self.avancer()
+        while self.coord_actuelle[1]<self.obstacle_fond()-1:
+            if self.obstacle_avant():
+                self.maj_obstacle_avant()
+                self.contournement(coord[0])
             else:
-                avancer()
-        virage_droite()
-        virage_droite()
+                self.avancer()
+        self.virage_droite()
+        self.virage_droite()
         return
 
     def exploration_retour(self,coord):
         while self.coord_actuelle[1]>coord[1]:
-            if obstacle_avant()==True:
-                maj_obstacle_avant()
-                contournement(coord[0])
+            if self.obstacle_avant()==True:
+                self.maj_obstacle_avant()
+                self.contournement(coord[0])
             else:
-                avancer()
-        while obstacle_avant()==False:
-            avancer()
+                self.avancer()
+        while self.obstacle_avant()==False:
+            self.avancer()
         return
 
     def deuxieme_tour(self):
-    coord_utile=[0,0]
-    for i in range((self.taille_map-2)//self.distance_decalage-1):
-        coord_utile=mise_en_position()
-        exploration_allez(coord_utile)
-        exploration_retour(coord_utile)
-        self.compteur_exploration+=1
-    return
+        coord_utile=[0,0]
+        for i in range((self.taille_map-2)//self.distance_decalage-1):
+            coord_utile=self.mise_en_position()
+            self.exploration_allez(coord_utile)
+            self.exploration_retour(coord_utile)
+            self.compteur_exploration+=1
+        return
