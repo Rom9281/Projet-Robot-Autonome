@@ -1,5 +1,5 @@
 ##Bibliothèques
-import cv2,numpy as np,matplotlib.pyplot as plt,signal,os
+import cv2,numpy as np,matplotlib.pyplot as plt,signal,os, math
 from multiprocessing import Process
 from Model.Peripherique import Peripherique
 
@@ -30,12 +30,16 @@ class Camera(Peripherique,Process):
         self.__sem_start.release()
 
         while self.__flag:
-            # Mettre ce qui se passe en un tour
-            pass
-            # COde ici
-            self.recupererMesure()
+            ret, frame = self.cap.read()
 
-            # envoyer les informations
+            if ret == True:
+                frame = cv2.flip(frame,1)
+                self.out.write(frame)
+                cercle_trouve,Pas_centre,direction,degre,image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle =self.detection_cercle_color(frame,self.red_seuil,self.green_seuil,self.blue_seuil,self.liste_THRESH_BINARY)
+            
+            else:
+                print("[$] Caméra non détéctée")
+                self.__flag = False
         
         self.cap.release() # Permet d'eteindre la caméra
         self.out.release()
@@ -170,54 +174,47 @@ class Camera(Peripherique,Process):
         
         new_contours = []
         seuil_circularite = 0.80
+
+        cercle_trouve = False
+        Pas_centre,direction = True,0
+        degre =0
         
         if (len(contours) != 0):
             for c in contours:
                 if self.Est_un_cercle(c,image_seuil,seuil_circularite):
                     new_contours.append(c)
+                    cercle_trouve = True
+                    icentre,jcentre=self.centre_cercle(c,image_seuil)
+                    Pas_centre,direction = self.Est_centre(icentre,image_seuil)
+                    degre = self.nombre_de_degre(jcentre,image_seuil)
                     
         frame_cercle = self.frame.copy()
         cv2.drawContours(frame_cercle,new_contours,-1,(128,255,128),3)
         
-        return image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle
+        return cercle_trouve,Pas_centre,direction,degre,image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle
     
-
-    def recupererMesure(self):
-        # Boucle while lance dans le run
-        # while( cap.isOpened() ):
-            
-        ret, frame = self.cap.read()
-
-        if ret == True:
-            frame = cv2.flip(frame,1)
-            self.out.write(frame)
-            cv2.imshow('frame' , frame)
-            image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle =detection_cercle_color(frame,red_seuil,green_seuil,blue_seuil,liste_THRESH_BINARY)
-            #print('New appel fonction')
-            cv2.imshow('Seuil rouge',image_red_seuil)
-            cv2.imshow('Seuil vert',image_green_seuil)
-            cv2.imshow('Seuil bleu',image_blue_seuil)
-            cv2.imshow('Image color seuil',image_seuil)
-            cv2.imshow('Image avec contours',frame_contours)
-            cv2.imshow('Image avec cercles',frame_cercle)
-            #detection_cercle_color(red_seuil,green_seuil,blue_seuil,liste_THRESH_BINARY)
-            """
-            # Utile si on est dans la boucle while
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            """
+    def Est_centre(self,icentre,image):
+        n = len(image) #peut être len(image[1])
+        milieu = np.floor(n/2)
+        if (abs(icentre-milieu) <= 50):
+            return False,0
+        elif (icentre < milieu): #A gauche
+            return True,0
         else:
-            print("[$] Caméra non détéctée")
-            self.__flag = False
-
+            return True,1
+    
+    def centre_cercle(self,c,image):
+        a=self.aire_v3(c,image)
+        rayon = math.floor(np.sqrt(a/np.pi))
+        imin = np.min(c[:,:,1])
+        jmin = np.min(c[:,:,0])
+        i_centre_cercle = imin + rayon
+        j_centre_cercle = jmin + rayon
+        return i_centre_cercle,j_centre_cercle
         
-
-    #cv2.destroyAllWindows()
-    """
-    cv2.imshow('Seuil rouge',image_red_seuil)
-    cv2.imshow('Seuil vert',image_green_seuil)
-    cv2.imshow('Seuil bleu',image_blue_seuil)
-    cv2.imshow('Image color seuil',image_seuil)
-    cv2.imshow('Image avec contours',frame_contours)
-    cv2.imshow('Image avec cercles',frame_cercle)
-    """
+    def nombre_de_degre(jcentre,image):
+        n = len(image[1])
+        milieu = np.floor(n/2)
+        nbr_pixels = np.floor(milieu-jcentre)
+        degre = nbr_pixels/12
+        return degre
