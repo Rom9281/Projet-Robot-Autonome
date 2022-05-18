@@ -1,0 +1,26 @@
+{
+    "avancer" : "AVNC",
+    "reculer" : "RCLR",
+    "tourner_gauche" : "TGCH",
+    "tourner_droite" : "TDRT",
+
+    "tirer" : "TIRE",
+    "allumerLampe" : "ALML",
+    "eteindreLampe" : "ETNL",
+
+    "klaxon" : "HPKL",
+
+    
+    "rotation_verticale" : "RVER",
+    "rotation_horizontale " :"RHOR",
+    "rot_ver_droite" : "RVDR",
+    "rot_ver_gauche" : "RVGC",
+    "rot_hor_droite" : "RHDR",
+    "rot_hor_gauche" : "RHGC", 
+    
+    "lidarMesure" : "LDMS",
+
+    "mesureUltrasonAv" : "USAV",
+    "mesureUltrasonAr" : "USAR"
+
+}

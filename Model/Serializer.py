@@ -1,47 +1,63 @@
-#from Model.Actionneur import Actionneur
-#from Controller.Enums import Vitesse, Commande,Sens
 
+
+import enum
 from Model.PeripheriqueCarte import PeripheriqueCarte
+from Model.Carte import Carte
+
+class Mouvement(enum.Enum):
+    AVANCER = 0
+    RECULER = 3
+    TOURNER_DROITE = 1
+    TOURNER_GAUCHE = 2
 
 class Serializer(PeripheriqueCarte):
     
-    def __init__(self,carte):
-        # super().__init__(pin,baude_rate)
-        super().__init__(carte,"MVTMTR","0","0")
+    def __init__(self,carte) -> None:
+        super().__init__(carte,"MVTMTR",0,0)
+        self.mouvements = Mouvement
 
     
-    def avancer(self,distance):
+    def avancer(self,distance = 10) -> bool:
+        # distance que l'on souhaite avancer en cm
+        self._arg1 = self.mouvements.AVANCER.value
+        self._arg2 = distance
 
-        self._commande = "MVTMTR"
-        self._arg1 = "1"
-        self._arg2 = str(distance)
+        self._carte.ecrireCommand(self.creerCommande())
 
-        self._carte.ecrireCommand(self._creerCommande())
+        return self.validationCommande()
+
+
+    def reculer(self,distance = 10) -> bool:
+        # distance que l'on souhaite reculer en cm
+
+        self._arg1 = self.mouvements.RECULER.value
+        self._arg2 = distance
+
+        self._carte.ecrireCommand(self.creerCommande())
+
+        return self.validationCommande()
+
     
-    def reculer(self,distance):
+    def tournerDroite(self,angle = 90) -> bool:
+        # angle que l'on souhaite tourner 
 
-        self._commande = "MVTMTR"
-        self._arg1 = "3"
-        self._arg2 = str(distance)
+        self._arg1 = self.mouvements.TOURNER_DROITE.value
+        self._arg2 = angle
 
-        self._carte.ecrireCommand(self._creerCommande())
+        self._carte.ecrireCommand(self.creerCommande())
+
+        return self.validationCommande()
+
+    def tournerGauche(self,angle = 90) -> bool:
+            # distance que l'on souhaite tourner
+
+        self._arg1 = self.mouvements.TOURNER_GAUCHE.value
+        self._arg2 = angle
+
+        self._carte.ecrireCommand(self.creerCommande())
+        return self.validationCommande()
+
     
-    def tournerDroite(self,angle):
-
-        self._commande = "MVTMTR"
-        self._arg1 = "2"
-        self._arg2 = str(angle)
-
-        self._carte.ecrireCommand(self._creerCommande())
-    
-    def tournerGauche(self,angle):
-    
-        self._commande = "MVTMTR"
-        self._arg1 = "4"
-        self._arg2 = str(angle)
-
-        self._carte.ecrireCommand(self._creerCommande())
-
     """
     CODE SI LE SERIALISER EST BRANCHE DIRECTEMENT AU RASPBERRY
     

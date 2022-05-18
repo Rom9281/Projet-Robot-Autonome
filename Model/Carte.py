@@ -1,30 +1,52 @@
 from calendar import c
 from Model.Peripherique import Peripherique
 
+
+## Peut etre ajouter une fonction de check initialisation du port serial dans le init afin d'
+## d'eviter les tests a chaque fois et de dire que l'on ne peut pas initialiser une carte si le port serie ne l'est pas 
 class Carte(Peripherique):
     
-    def __init__(self,pin,baude_rate):
-        super().__init__(pin,baude_rate)
+    def __init__(self):
+        super().__init__()
 
-    
-    def ecrireCommand(self,command):
+
+    """
+    Permet d'ecrire une commande pour le peripherique
+    Retourne 
+    """
+    def ecrireCommand(self,command) -> bool:
         ret = False
+
         if(self._serial):
-            print(command)
-            print(self._serial.write(command.encode()))
+            self._serial.write(command.encode())
+            ret = True
 
         else:
-            pass
-            print("[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
+            print("\n[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
 
         return ret
 
-    def lireCommande(self):
-        ret = False
-        # TODO : permettre de parser les valeur lues pour les transmettres
-        ret = self._serial.read()
-        return ret
+    """
+    Permet de lire la commande envoyé par le peripherique
+    Retourne True si jamais c'est ok
+    """
+    def lireCommande(self) -> str:
+        ret = ""
+
+        if(self._serial):
+            ret = self._serial.readline()
+
+        else:
+            print("\n[$] %s : Peripherique n'est pas connecté" %(self.__class__.__name__))
+
+        return ret 
     
-    def recupererInfo(self,commande):
-        self.ecrireCommand(commande)
-        return self.lireCommande()
+    """
+    Permet de valider le faite que la commande ait bien été envoyé et effectuée
+    """
+    def valider(self,commande) -> bool:
+        read = self.lireCommande() # On lit la commande
+        liste = read.split() # on parse la liste 
+
+        return (liste[0]==commande) & (liste[-1]=="ok")
+
