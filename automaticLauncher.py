@@ -4,6 +4,7 @@ Agis pour le moment également comme l'interface graphique avec l'utilisateur
 """
 
 import multiprocessing as mp, keyboard,sys, json, time
+from Controller.Camera import Camera
 from Controller.IntelRobot import IntelligenceRobot
 
 #sys.path.append(r'C:\Users\romai\OneDrive\Documents\School\4A\ProjetTransversal\WorkspacePiGit\Model' )
@@ -30,8 +31,11 @@ queue_info = mp.Queue() # queue contenant les informations retournées
 sem_start = mp.Semaphore(0)
 corps = CorpsRobot(queue_commande, queue_info, sem_start)
 
-# On ajoute un lidar directement connecté au raspberry
+# On ajoute une intelligence
 intel= IntelligenceRobot(queue_commande, queue_info,sem_start)
+
+# On ajoute le process de la camera
+camera = Camera(queue_commande, queue_info,sem_start)
 
 @automaticLauncher.route("/auto/<action>")
 def robotAuto(action):

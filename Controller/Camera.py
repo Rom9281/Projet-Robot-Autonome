@@ -1,12 +1,49 @@
 ##Bibliothèques
-import cv2,numpy as np,matplotlib.pyplot as plt
+import cv2,numpy as np,matplotlib.pyplot as plt,signal,os
 from multiprocessing import Process
 from Model.Peripherique import Peripherique
 
 
 class Camera(Peripherique,Process):
-    def __init__(self):
+    def __init__(self,queue_commande, queue_info,sem_start):
         super(Camera, self).__init__()
+        self.__queue_commande = queue_commande
+        self.__queue_info = queue_info
+        self.__sem_start = sem_start
+        self.__flag = True
+
+        self.cap = cv2.VideoCapture(0) #1+ cv2.CAP_DSHOW
+
+        self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        self.out = cv2.VideoWriter('output.avi',self.fourcc, 25.0, (640,480))
+        self.red_seuil = 150
+        self.green_seuil = 150
+        self.blue_seuil = 100
+        self.liste_THRESH_BINARY=[cv2.THRESH_BINARY,cv2.THRESH_BINARY_INV,cv2.THRESH_BINARY]
+
+    
+    def run(self):
+        signal.signal(signal.SIGTERM, self.signal_handler)
+
+        print("[$] %s:%s : Process Camera actif"%(os.getppid(),os.getpid()))
+
+        self.__sem_start.release()
+
+        while self.__flag:
+            # Mettre ce qui se passe en un tour
+            pass
+            # COde ici
+            self.recupererMesure()
+
+            # envoyer les informations
+        
+        self.cap.release() # Permet d'eteindre la caméra
+        self.out.release()
+    
+    def signal_handler(self):
+        print("[*] Process Corps est arrêté")
+        self.__flag = False
+        self.__sem_start.release()
 
     def matrice_couleur(self,image,k):
         return image[:,:,k]
@@ -143,38 +180,37 @@ class Camera(Peripherique,Process):
         cv2.drawContours(frame_cercle,new_contours,-1,(128,255,128),3)
         
         return image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle
-    def recupererMesure(self):
-        cap = cv2.VideoCapture(0) #1+ cv2.CAP_DSHOW
+    
 
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('output.avi',fourcc, 25.0, (640,480))
-        red_seuil = 150
-        green_seuil = 150
-        blue_seuil = 100
-        liste_THRESH_BINARY=[cv2.THRESH_BINARY,cv2.THRESH_BINARY_INV,cv2.THRESH_BINARY]
-        print("ok")
-        while( cap.isOpened() ):
+    def recupererMesure(self):
+        # Boucle while lance dans le run
+        # while( cap.isOpened() ):
             
-            ret, frame = cap.read()
-            if ret == True:
-                frame = cv2.flip(frame,1)
-                out.write(frame)
-                cv2.imshow('frame' , frame)
-                image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle =detection_cercle_color(frame,red_seuil,green_seuil,blue_seuil,liste_THRESH_BINARY)
-                #print('New appel fonction')
-                cv2.imshow('Seuil rouge',image_red_seuil)
-                cv2.imshow('Seuil vert',image_green_seuil)
-                cv2.imshow('Seuil bleu',image_blue_seuil)
-                cv2.imshow('Image color seuil',image_seuil)
-                cv2.imshow('Image avec contours',frame_contours)
-                cv2.imshow('Image avec cercles',frame_cercle)
-                #detection_cercle_color(red_seuil,green_seuil,blue_seuil,liste_THRESH_BINARY)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            else:
+        ret, frame = self.cap.read()
+
+        if ret == True:
+            frame = cv2.flip(frame,1)
+            self.out.write(frame)
+            cv2.imshow('frame' , frame)
+            image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle =detection_cercle_color(frame,red_seuil,green_seuil,blue_seuil,liste_THRESH_BINARY)
+            #print('New appel fonction')
+            cv2.imshow('Seuil rouge',image_red_seuil)
+            cv2.imshow('Seuil vert',image_green_seuil)
+            cv2.imshow('Seuil bleu',image_blue_seuil)
+            cv2.imshow('Image color seuil',image_seuil)
+            cv2.imshow('Image avec contours',frame_contours)
+            cv2.imshow('Image avec cercles',frame_cercle)
+            #detection_cercle_color(red_seuil,green_seuil,blue_seuil,liste_THRESH_BINARY)
+            """
+            # Utile si on est dans la boucle while
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-        cap.release()
-        out.release()
+            """
+        else:
+            print("[$] Caméra non détéctée")
+            self.__flag = False
+
+        
 
     #cv2.destroyAllWindows()
     """
