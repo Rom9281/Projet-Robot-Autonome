@@ -108,12 +108,12 @@ class IntelligenceRobot(Process):
 
     #      Recuperation des fonctions de base (avancer,tourner,...)
 
-    def virage_droite():
+    def virage_droite(self):
         self.orientation(1)
         #print('virage droite')
 
 
-    def virage_gauche():
+    def virage_gauche(self):
         self.orientation(-1)
         # print('virage gauche')
 
@@ -184,7 +184,7 @@ class IntelligenceRobot(Process):
 
     def obstacle_fond(self):
         for i in range(self.coord_actuelle[0]-1+self.distance_min_mvmt,self.coord_actuelle[0]+self.distance_min_mvmt):
-            ymin=np.copy(taille_map)
+            ymin=np.copy(self.taille_map)
             for j in range(ymin//2,ymin):
                 if self.M[i][j]==1:
                     if ymin>j:
