@@ -59,11 +59,10 @@ def lauchAuto():
             
     corps.start() # Commence le processus corps
     intel.start() # idem intelligence
-
-    print("[*] Corps PID %s"%(corps.pid))
-    print("[*] Intel PID %s"%(intel.pid))
+    camera.start()
 
     # Attend l'initialisation des deux autres processus avant de passer des commandes
+    sem_start.acquire()
     sem_start.acquire()
     sem_start.acquire()
 

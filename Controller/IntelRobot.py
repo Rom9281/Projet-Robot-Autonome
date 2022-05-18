@@ -406,24 +406,23 @@ def exploration_allez(coord):
     virage_droite()
     return
 
-def exploration_retour(coord):
+def exploration_retour(self,coord):
     while coord_actuelle[1]>coord[1]:
         if obstacle_avant()==True:
             maj_obstacle_avant()
             contournement(coord[0])
         else:
             avancer()
-    while obstacle_avant()==False:
+    while self.obstacle_avant()==False:
         avancer()
     return
 
 def deuxieme_tour():
     global compteur_exploration
     coord_utile=[0,0]
-    for i in range((taille_map-2)//distance_decalage-1):
+    for i in range((self.taille_map-2)//distance_decalage-1):
         coord_utile=mise_en_position()
         exploration_allez(coord_utile)
         exploration_retour(coord_utile)
         compteur_exploration+=1
     return
-"""       

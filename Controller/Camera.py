@@ -1,5 +1,5 @@
 ##Bibliothèques
-import cv2,numpy as np,matplotlib.pyplot as plt,signal,os, math
+import cv2,numpy as np,matplotlib.pyplot as plt,signal,os, math,json, time
 from multiprocessing import Process
 from Model.Peripherique import Peripherique
 
@@ -7,13 +7,18 @@ from Model.Peripherique import Peripherique
 class Camera(Peripherique,Process):
     def __init__(self,queue_commande, queue_info,sem_start):
         super(Camera, self).__init__()
+
+        # Lié au process
         self.__queue_commande = queue_commande
         self.__queue_info = queue_info
         self.__sem_start = sem_start
         self.__flag = True
 
-        self.cap = cv2.VideoCapture(0) #1+ cv2.CAP_DSHOW
+        # Configuration des commandes
+        self.__config_commandes_path = "./Controller/commandes.json"
+        self.__commandes = json.load(open(self.__config_commandes_path)) # récupère la config des périphériques dans le json
 
+        self.cap = cv2.VideoCapture(0) #1+ cv2.CAP_DSHOW
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.out = cv2.VideoWriter('output.avi',self.fourcc, 25.0, (640,480))
         self.red_seuil = 150
@@ -21,6 +26,7 @@ class Camera(Peripherique,Process):
         self.blue_seuil = 100
         self.liste_THRESH_BINARY=[cv2.THRESH_BINARY,cv2.THRESH_BINARY_INV,cv2.THRESH_BINARY]
 
+        self.__etape = 1
     
     def run(self):
         signal.signal(signal.SIGTERM, self.signal_handler)
@@ -35,7 +41,35 @@ class Camera(Peripherique,Process):
             if ret == True:
                 frame = cv2.flip(frame,1)
                 self.out.write(frame)
-                cercle_trouve,Pas_centre,direction,degre,image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle =self.detection_cercle_color(frame,self.red_seuil,self.green_seuil,self.blue_seuil,self.liste_THRESH_BINARY)
+                cercle_trouve,pas_centre,direction,degre = self.detection_cercle_color(frame,self.red_seuil,self.green_seuil,self.blue_seuil,self.liste_THRESH_BINARY)
+
+                # instructions
+                if self.__etape == 1:
+                    if cercle_trouve:
+                        self.__etape += 1
+                    else:
+                        # Coder la rotation normale pour detecter le cercle
+                        #self.__queue_commande()
+                        pass
+                elif self.__etape == 2:
+                    if pas_centre:
+                        #mettre les commandes pour ajuster
+                        # a l'aide de direction
+                        if direction:
+                            # le cerlcle est a droite
+                            pass
+                        else:
+                            # le cercle est a gauche
+                            pass
+                    else:
+                        self.__etape = 3
+
+                elif self.__etape == 3:
+                    # envoyer la commande en degree
+                    self.__queue_commande.put(f'{self.__commandes["rotation_verticale"]}:{degre}')
+                    time.sleep(1)
+                    self.__etape = 1
+                    
             
             else:
                 print("[$] Caméra non détéctée")
@@ -191,7 +225,7 @@ class Camera(Peripherique,Process):
         frame_cercle = self.frame.copy()
         cv2.drawContours(frame_cercle,new_contours,-1,(128,255,128),3)
         
-        return cercle_trouve,Pas_centre,direction,degre,image_red_seuil,image_green_seuil,image_blue_seuil,image_seuil,frame_contours,frame_cercle
+        return cercle_trouve,Pas_centre,direction,degre
     
     def Est_centre(self,icentre,image):
         n = len(image) #peut être len(image[1])
