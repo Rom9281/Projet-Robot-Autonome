@@ -53,376 +53,241 @@ class IntelligenceRobot(Process):
         self.__flag = False
     
 
-    #          Creation de 3 fonctions obstacles
-    def obstacle_avant (self,message) -> bool: 
+    def obstacle_avant (self,message) : 
         ret = False
         for tuple in message:
             if tuple[0]>=self.qualite_min:
                 if tuple[1] < 168 and tuple[1]>=146: 
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_avant_g()
+                        #maj_avant_g()
                 if  tuple[1] >= 168 and tuple[1]<192:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_avant_c()
+                        #maj_avant_c()
                 if  tuple[1] >= 192 and tuple[1]<214:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_avant_d() 
+                        #maj_avant_d() 
         return ret
 
 
-    def obstacle_droite (self,message) -> bool:
-        
+    def obstacle_droite (self,message) :
         ret = False
-
         for tuple in message:
-            if tuple[0]>=self.qualite_min:
+            if tuple[0]>= self.qualite_min:
                 if tuple[1] >= 214 and tuple[1]<236: 
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_droite_g()
+                        #maj_droite_g()
                 if  tuple[1] >= 236 and tuple[1]<258:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_droite_c()
+                        #maj_droite_c()
                 if  tuple[1] >= 258 and tuple[1]<280:
-                    if tuple[2]<= distance_min:
+                    if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_droite_d() 
+                        #maj_droite_d() 
         return ret
 
 
     def obstacle_gauche (self,message) : 
         ret = False
         for tuple in message:
-            if tuple[0]>=self.qualite_min:
+            if tuple[0]>= self.qualite_min:
                 if tuple[1] >= 80 and tuple[1]<102: 
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_gauche_g()
+                        #maj_gauche_g()
                 if  tuple[1] >= 102 and tuple[1]<124:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_gauche_c()
+                        #maj_gauche_c()
                 if  tuple[1] >= 124 and tuple[1]<146:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        maj_gauche_d() 
+                        #maj_gauche_d() 
         return ret
 
 
 
-    def virage_droite(self):
+    #      Recuperation des fonctions de base (avancer,tourner,...)
+
+    def virage_droite():
         orientation(1)
-        if orientation_actuelle == 0:
-            self.coord_actuelle[0]+=5
-            self.coord_actuelle[1]+=1
-        elif orientation_actuelle == 1:
-            self.coord_actuelle[0]+=1
-            self.coord_actuelle[1]-=5
-        elif orientation_actuelle ==2 :
-            self.coord_actuelle[0]-=5
-            self.coord_actuelle[1]-=1
-        else :
-            self.coord_actuelle[0]-=1
-            self.coord_actuelle[1]+=5
-        #print(coord_actuelle)
         #print('virage droite')
 
 
-    def virage_gauche(self):
+    def virage_gauche():
         orientation(-1)
-        if orientation_actuelle == 0:
-            self.coord_actuelle[0]-=1
-            self.coord_actuelle[1]-=5
-        elif orientation_actuelle == 1:
-            self.coord_actuelle[0]-=5
+        # print('virage gauche')
+
+
+    def avancer(self):
+        if self.orientation_actuelle == 0:
+            self.coord_actuelle[1]+=1
+        elif self.orientation_actuelle == 1:
+            self.coord_actuelle[0]+=1
+        elif self.orientation_actuelle ==2 :
             self.coord_actuelle[1]-=1
-        elif orientation_actuelle ==2 :
-            self.coord_actuelle[0]-=1
-            self.coord_actuelle[1]+=5
         else :
-            self.coord_actuelle[0]-=5
-            coord_actuelle[1]+=1
-        print(coord_actuelle)
-        print('virage gauche')
-
-
-def avancer():
-    global orientation_actuelle
-    if orientation_actuelle == 0:
-        coord_actuelle[1]+=1
-    elif orientation_actuelle == 1:
-        coord_actuelle[0]+=1
-    elif orientation_actuelle ==2 :
-        coord_actuelle[1]-=1
-    else :
-        coord_actuelle[0]-=1
-    print('avance')
-    print(coord_actuelle)
+            self.coord_actuelle[0]-=1
+        #   print('avance')
+        #  print(coord_actuelle)
 
 
 
-#           fonction de base
+    #           fonction de base
 
-def orientation(p):
-    global orientation_actuelle
-    if orientation_actuelle==3 and p==1:
-       orientation_actuelle = 0
-    elif orientation_actuelle==0 and p==-1:
-        orientation_actuelle = 3
-    else :
-         orientation_actuelle += p
-    return
+    def orientation(self,p):
+        if self.orientation_actuelle==3 and p==1:
+            self.orientation_actuelle = 0
+        elif self.orientation_actuelle==0 and p==-1:
+            self.orientation_actuelle = 3
+        else :
+            self.orientation_actuelle += p
+        return
 
-def premier_tour():
-    avancer()
-    while coord_actuelle != coord_init :
-        # Attend la donnee
-        # Quand elle arrive
-        if obstacle_gauche(donnne):
-            if obstacle_avant(donnee):
-                virage_droite() # Modifier le virage
-                avancer()
-            else :
-                avancer()
-        else:
-            virage_gauche()
-            avancer()
-    return 
-
-
-def mise_en_position():
-    global compteur_exploration
-    if compteur_exploration == 1:
-        virage_droite()
-        virage_droite()
-    else :
-        virage_gauche()
-    while coord_actuelle[0]!=coord_init[0]+compteur_exploration*distance_decalage:
-        if obstacle_droite():
-            maj_obstacle_droite()
-            if obstacle_avant():
-                maj_obstacle_avant()
+    def premier_tour(self):
+        avancer()
+        while self.coord_actuelle != self.coord_init :
+            if obstacle_gauche():
+                maj_obstacle_gauche()
+                if obstacle_avant():
+                    maj_obstacle_avant()
+                    virage_droite()
+                    avancer()
+                else :
+                    avancer()
+            else:
                 virage_gauche()
                 avancer()
-            else: 
-                avancer()
-        else:
+        self.taille_map=fond()
+        return 
+
+
+    def mise_en_position(self):
+        if self.compteur_exploration == 1:
             virage_droite()
+            virage_droite()
+        else :
+            virage_gauche()
+        while self.coord_actuelle[0]!=self.coord_init[0]+self.compteur_exploration*self.distance_decalage:
+            if obstacle_droite():
+                maj_obstacle_droite()
+                if obstacle_avant():
+                    maj_obstacle_avant()
+                    virage_gauche()
+                    avancer()
+                else: 
+                    avancer()
+            else:
+                virage_droite()
+                avancer()
+        virage_gauche()
+        return np.copy(self.coord_actuelle)
+
+    def obstacle_fond(self):
+        for i in range(self.coord_actuelle[0]-1+self.distance_min_mvmt,self.coord_actuelle[0]+self.distance_min_mvmt):
+            ymin=np.copy(taille_map)
+            for j in range(ymin//2,ymin):
+                if M[i][j]==1:
+                    if ymin>j:
+                        ymin=j
+        return ymin
+
+    def fond(self):
+        kmin=0
+        for i,val in enumerate(self.M):
+                    k=max(val)
+                    if k>kmin:
+                                kmin=k
+        return(kmin)
+                                    
+
+
+    def maj_obstacle_gauche(self):
+        if self.orientation_actuelle == 0:
+            self.M[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
+        elif self.orientation_actuelle == 1:
+                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
+        elif self.orientation_actuelle == 2:
+            self.M[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
+        else :
+                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
+        return
+
+    def maj_obstacle_droite(self):
+        if self.orientation_actuelle == 0:
+            self.M[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
+        elif self.orientation_actuelle == 1:
+                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
+        elif self.orientation_actuelle == 2:
+            self.M[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
+        else :
+                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
+        return
+
+    def maj_obstacle_avant(self):
+        if self.orientation_actuelle == 0:
+            self.M[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
+        elif self.orientation_actuelle == 1:
+                self.M[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
+        elif self.orientation_actuelle == 2:
+            self.M[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
+        else :
+                self.M[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
+        return
+
+
+    def contournement(self,x):
+        self.virage_gauche()
+        self.avancer()
+        while self.obstacle_droite():
+            maj_obstacle_droite()
             avancer()
-    virage_gauche()
-    return np.copy(coord_actuelle)
-    
-def obstacle_fond():
-    for i in range(coord_actuelle[0]-1+distance_min_mvmt_g,coord_actuelle[0]+distance_min_mvmt_d):
-        ymin=np.copy(taille_map)
-        for j in range(taille_map//2,taille_map):
-           if M[i][j]==1:
-               if ymin>j:
-                   ymin=j
-    return taille_map-ymin
 
-
-
-
-def maj_avant_g():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]-i][coord_actuelle[1]+10]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+10][coord_actuelle[1]+i]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]+i][coord_actuelle[1]-10]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-10][coord_actuelle[1]-i]=1
-
-def maj_avant_c():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]+i][coord_actuelle[1]+10]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+10][coord_actuelle[1]-i]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]-i][coord_actuelle[1]-10]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-10][coord_actuelle[1]+i]=1
-
-def maj_avant_d():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]+i+6][coord_actuelle[1]+10]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+10][coord_actuelle[1]-i-6]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]-i-6][coord_actuelle[1]-10]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-10][coord_actuelle[1]+i]=1
-
-
-
-
-def maj_gauche_g():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]-10][coord_actuelle[1]-i]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]-i][coord_actuelle[1]+10]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]+10][coord_actuelle[1]+i]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]+i][coord_actuelle[1]-10]=1
-
-def maj_gauche_c():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]-10][coord_actuelle[1]+i]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+i][coord_actuelle[1]+10]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]+10][coord_actuelle[1]-i]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-i][coord_actuelle[1]-10]=1
-
-def maj_gauche_d():
-   if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]-10][coord_actuelle[1]+i+6]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+i+6][coord_actuelle[1]+10]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]+10][coord_actuelle[1]-i-6]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-i-6][coord_actuelle[1]-10]=1
-
-
-
-def maj_droite_g():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]+16][coord_actuelle[1]-i]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]-i][coord_actuelle[1]-16]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]-16][coord_actuelle[1]+i]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]+i][coord_actuelle[1]+16]=1
-
-def maj_droite_c():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]+16][coord_actuelle[1]+i]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+i][coord_actuelle[1]-16]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]-16][coord_actuelle[1]-i]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-i][coord_actuelle[1]+16]=1
-
-def maj_droite_d():
-    if orientation_actuelle == 0:
-        for i in range(6):
-          M[coord_actuelle[0]+16][coord_actuelle[1]+i+6]=1
-    elif orientation_actuelle == 1:
-        for i in range(6):
-          M[coord_actuelle[0]+i+6][coord_actuelle[1]-16]=1
-    elif orientation_actuelle == 2:
-        for i in range(6):
-          M[coord_actuelle[0]-16][coord_actuelle[1]-i-6]=1
-    else :
-        for i in range(6):
-          M[coord_actuelle[0]-i-6][coord_actuelle[1]+16]=1
-
-
-
-def contournement(x):
-    if obstacle_gauche():
-        maj_obstacle_gauche()
-        virage_gauche()
-        virage_gauche()
+        virage_droite()
         avancer()
+
         while obstacle_droite():
             maj_obstacle_droite()
             avancer()
         virage_droite()
         avancer()
-    else :
+        while self.coord_actuelle[0]!=x:
+            avancer()
         virage_gauche()
+        return
+
+    def exploration_allez(self,coord):
         avancer()
-    while coord_actuelle[0]!=x:
-        if obstacle_avant() and obstacle_droite():
-            maj_obstacle_avant()
-            virage_gauche() 
-            avancer()
-            while obstacle_droite():
-                maj_obstacle_droite()
+        while self.coord_actuelle[1]<obstacle_fond()-1:
+            if obstacle_avant():
+                maj_obstacle_avant()
+                contournement(coord[0])
+            else:
                 avancer()
-            virage_droite()
-            avancer()
-        elif obstacle_droite():
-            maj_obstacle_droite()
-            avancer()
-        else : 
-            virage_droite()
-            avancer()
-    virage_gauche()
-    return
+        virage_droite()
+        virage_droite()
+        return
 
-def exploration_allez(coord):
-    avancer()
-    while coord_actuelle[1]<taille_map-1-obstacle_fond():
-        if obstacle_avant():
-            maj_obstacle_avant()
-            contournement(coord[0])
-        else:
+    def exploration_retour(self,coord):
+        while self.coord_actuelle[1]>coord[1]:
+            if obstacle_avant()==True:
+                maj_obstacle_avant()
+                contournement(coord[0])
+            else:
+                avancer()
+        while obstacle_avant()==False:
             avancer()
-    virage_droite()
-    virage_droite()
-    return
+        return
 
-def exploration_retour(self,coord):
-    while coord_actuelle[1]>coord[1]:
-        if obstacle_avant()==True:
-            maj_obstacle_avant()
-            contournement(coord[0])
-        else:
-            avancer()
-    while self.obstacle_avant()==False:
-        avancer()
-    return
-
-def deuxieme_tour():
-    global compteur_exploration
+    def deuxieme_tour(self):
     coord_utile=[0,0]
-    for i in range((self.taille_map-2)//distance_decalage-1):
+    for i in range((self.taille_map-2)//self.distance_decalage-1):
         coord_utile=mise_en_position()
         exploration_allez(coord_utile)
         exploration_retour(coord_utile)
-        compteur_exploration+=1
+        self.compteur_exploration+=1
     return
