@@ -13,20 +13,23 @@ class IntelligenceRobot(Process):
         self.__flag = True
         
         # Variable de localisation
-        coord_init = [11,14]
-        coord_actuelle = [9,10]
-        orientation_actuelle = 0
-        taille_map=10000
-        distance_min_mvmt_g=6
-        distance_min_mvmt_d=12
-        compteur_exploration=1
-        distance_decalage=12
+        self.coord_init = [11,14]
+        self.coord_actuelle = [9,10]
+        self.orientation_actuelle = 0
+        self.taille_map=10000
+        self.distance_min_mvmt_g=6
+        self.distance_min_mvmt_d=12
+        self.compteur_exploration=1
+        self.distance_decalage=12
+
+        self.qualite_min = 8
+        self.distance_min=450
 
 
         # Matrice
-        M=np.zeros((taille_map,taille_map)) 
-        M[0,]=1
-        M[: 1]=1
+        self.M=np.zeros((self.taille_map,self.taille_map)) 
+        self.M[0,]=1
+        self.M[: 1]=1
 
         
     def run(self):
@@ -39,9 +42,9 @@ class IntelligenceRobot(Process):
         while self.__flag:
             time.sleep(2)
 
-        #premier_tour()
+        self.premier_tour()
 
-        #deuxième_tour()
+        self.deuxième_tour()
 
             
     
@@ -49,108 +52,102 @@ class IntelligenceRobot(Process):
         print("[*] Process Intelligence est arrêté")
         self.__flag = False
     
-"""
+
     #          Creation de 3 fonctions obstacles
-def obstacle_avant (message) : 
-    qualite_min = 8
-    distance_min=450
-    ret = False
-    for tuple in message:
-        if tuple[0]>=qualite_min:
-            if tuple[1] < 168 and tuple[1]>=146: 
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_avant_g()
-            if  tuple[1] >= 168 and tuple[1]<192:
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_avant_c()
-            if  tuple[1] >= 192 and tuple[1]<214:
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_avant_d() 
-    return ret
+    def obstacle_avant (self,message) -> bool: 
+        ret = False
+        for tuple in message:
+            if tuple[0]>=self.qualite_min:
+                if tuple[1] < 168 and tuple[1]>=146: 
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_avant_g()
+                if  tuple[1] >= 168 and tuple[1]<192:
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_avant_c()
+                if  tuple[1] >= 192 and tuple[1]<214:
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_avant_d() 
+        return ret
 
 
-def obstacle_droite (message) :
-    qualite_min = 8
-    distance_min=450
-    ret = False
-    for tuple in message:
-        if tuple[0]>=qualite_min:
-            if tuple[1] >= 214 and tuple[1]<236: 
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_droite_g()
-            if  tuple[1] >= 236 and tuple[1]<258:
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_droite_c()
-            if  tuple[1] >= 258 and tuple[1]<280:
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_droite_d() 
-    return ret
+    def obstacle_droite (self,message) -> bool:
+        
+        ret = False
+
+        for tuple in message:
+            if tuple[0]>=self.qualite_min:
+                if tuple[1] >= 214 and tuple[1]<236: 
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_droite_g()
+                if  tuple[1] >= 236 and tuple[1]<258:
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_droite_c()
+                if  tuple[1] >= 258 and tuple[1]<280:
+                    if tuple[2]<= distance_min:
+                        ret = True
+                        maj_droite_d() 
+        return ret
 
 
-def obstacle_gauche (message) : 
-    qualite_min = 8
-    distance_min=450
-    ret = False
-    for tuple in message:
-        if tuple[0]>=qualite_min:
-            if tuple[1] >= 80 and tuple[1]<102: 
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_gauche_g()
-            if  tuple[1] >= 102 and tuple[1]<124:
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_gauche_c()
-            if  tuple[1] >= 124 and tuple[1]<146:
-                if tuple[2]<= distance_min:
-                    ret = True
-                    maj_gauche_d() 
-    return ret
+    def obstacle_gauche (self,message) : 
+        ret = False
+        for tuple in message:
+            if tuple[0]>=self.qualite_min:
+                if tuple[1] >= 80 and tuple[1]<102: 
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_gauche_g()
+                if  tuple[1] >= 102 and tuple[1]<124:
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_gauche_c()
+                if  tuple[1] >= 124 and tuple[1]<146:
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        maj_gauche_d() 
+        return ret
 
 
 
-def virage_droite():
-    orientation(1)
-    global orientation_actuelle
-    if orientation_actuelle == 0:
-        coord_actuelle[0]+=5
-        coord_actuelle[1]+=1
-    elif orientation_actuelle == 1:
-        coord_actuelle[0]+=1
-        coord_actuelle[1]-=5
-    elif orientation_actuelle ==2 :
-        coord_actuelle[0]-=5
-        coord_actuelle[1]-=1
-    else :
-        coord_actuelle[0]-=1
-        coord_actuelle[1]+=5
-    print(coord_actuelle)
-    print('virage droite')
+    def virage_droite(self):
+        orientation(1)
+        if orientation_actuelle == 0:
+            self.coord_actuelle[0]+=5
+            self.coord_actuelle[1]+=1
+        elif orientation_actuelle == 1:
+            self.coord_actuelle[0]+=1
+            self.coord_actuelle[1]-=5
+        elif orientation_actuelle ==2 :
+            self.coord_actuelle[0]-=5
+            self.coord_actuelle[1]-=1
+        else :
+            self.coord_actuelle[0]-=1
+            self.coord_actuelle[1]+=5
+        #print(coord_actuelle)
+        #print('virage droite')
 
 
-def virage_gauche():
-    orientation(-1)
-    global orientation_actuelle
-    if orientation_actuelle == 0:
-        coord_actuelle[0]-=1
-        coord_actuelle[1]-=5
-    elif orientation_actuelle == 1:
-        coord_actuelle[0]-=5
-        coord_actuelle[1]-=1
-    elif orientation_actuelle ==2 :
-        coord_actuelle[0]-=1
-        coord_actuelle[1]+=5
-    else :
-        coord_actuelle[0]-=5
-        coord_actuelle[1]+=1
-    print(coord_actuelle)
-    print('virage gauche')
+    def virage_gauche(self):
+        orientation(-1)
+        if orientation_actuelle == 0:
+            self.coord_actuelle[0]-=1
+            self.coord_actuelle[1]-=5
+        elif orientation_actuelle == 1:
+            self.coord_actuelle[0]-=5
+            self.coord_actuelle[1]-=1
+        elif orientation_actuelle ==2 :
+            self.coord_actuelle[0]-=1
+            self.coord_actuelle[1]+=5
+        else :
+            self.coord_actuelle[0]-=5
+            coord_actuelle[1]+=1
+        print(coord_actuelle)
+        print('virage gauche')
 
 
 def avancer():

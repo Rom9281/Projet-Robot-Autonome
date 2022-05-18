@@ -8,20 +8,13 @@ import random, math, time
 
 from flask import Blueprint
 
-
-
 manuelLauncher = Blueprint("manuelLauncher", __name__ )
-
 
 @manuelLauncher.route("/man/<action>/<param>")
 def robotController( action, param):
     message = CommandesManuellesRobot(action, param)
     
     return json.dumps(message)
-
-
-
-
 
 
 def envoyerCommande(ser, commande, param1, param2):
