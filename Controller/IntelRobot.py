@@ -222,25 +222,38 @@ class IntelligenceRobot(Process):
         return
 
 
-    def contournement(self,x):
+   def contournement(x):
+    if self.obstacle_gauche():
+        self.maj_obstacle_gauche()
+        self.virage_gauche()
         self.virage_gauche()
         self.avancer()
         while self.obstacle_droite():
             self.maj_obstacle_droite()
             self.avancer()
-
         self.virage_droite()
         self.avancer()
-
-        while self.obstacle_droite():
+    else :
+        self.virage_gauche()
+        self.avancer()
+    while self.coord_actuelle[0]!=x:
+        if self.obstacle_avant() and self.obstacle_droite():
+            self.maj_obstacle_avant()
+            self.virage_gauche() 
+            self.avancer()
+            while self.obstacle_droite():
+                self.maj_obstacle_droite()
+                self.avancer()
+            self.virage_droite()
+            self.avancer()
+        elif self.obstacle_droite():
             self.maj_obstacle_droite()
             self.avancer()
-        self.virage_droite()
-        self.avancer()
-        while self.coord_actuelle[0]!=x:
+        else : 
+            self.virage_droite()
             self.avancer()
-        self.virage_gauche()
-        return
+    self.virage_gauche()
+    return
 
     def exploration_allez(self,coord):
         self.avancer()
