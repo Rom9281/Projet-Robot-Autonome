@@ -8,7 +8,7 @@
     "STM":
     {
         "Baud":19200,
-        "Pin":"/dev/ttyUSB1"
+        "Pin":"COM7"
     }
         
 }

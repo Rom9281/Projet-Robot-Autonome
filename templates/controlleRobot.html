@@ -23,7 +23,7 @@
           <button type="button" onclick="mesureDistanceAvant()">Mesure distance</button>
         </div>
         <div class="retourVideo">
-            <img src="{{ url_for('video_feed') }}" height="200">
+            <img src="{{ url_for('video_feed_camera') }}" height="200">
         </div>
         <div class="ControllerUsAr">
           <p> Distance arriere: {{distance}} cm</p>
@@ -64,7 +64,7 @@
         </div>
 
         <div class="retourLidar">
-          <img src="{{ url_for('video_feed') }}" height="200">
+          <img src="{{ url_for('video_feed_lidar') }}" height="200">
       </div>
     </div>
 

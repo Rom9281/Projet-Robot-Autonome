@@ -1,4 +1,4 @@
-rom ast import pattern
+from ast import pattern
 import time
 from tkinter import N
 import numpy as np
