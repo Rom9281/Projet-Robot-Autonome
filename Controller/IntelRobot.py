@@ -41,7 +41,7 @@ class IntelligenceRobot(Process):
 
         self.premier_tour()
 
-        self.deuxième_tour()
+        self.deuxieme_tour()
 
             
     
@@ -133,7 +133,6 @@ class IntelligenceRobot(Process):
 
         self.__q_com.put(f'{self.__commmande["avancer"]}:5')
 
-
     #           fonction de base
 
     def orientation(self,p):
@@ -222,38 +221,38 @@ class IntelligenceRobot(Process):
         return
 
 
-   def contournement(x):
-    if self.obstacle_gauche():
-        self.maj_obstacle_gauche()
-        self.virage_gauche()
-        self.virage_gauche()
-        self.avancer()
-        while self.obstacle_droite():
-            self.maj_obstacle_droite()
-            self.avancer()
-        self.virage_droite()
-        self.avancer()
-    else :
-        self.virage_gauche()
-        self.avancer()
-    while self.coord_actuelle[0]!=x:
-        if self.obstacle_avant() and self.obstacle_droite():
-            self.maj_obstacle_avant()
-            self.virage_gauche() 
+    def contournement(self, x):
+        if self.obstacle_gauche():
+            self.maj_obstacle_gauche()
+            self.virage_gauche()
+            self.virage_gauche()
             self.avancer()
             while self.obstacle_droite():
                 self.maj_obstacle_droite()
                 self.avancer()
             self.virage_droite()
             self.avancer()
-        elif self.obstacle_droite():
-            self.maj_obstacle_droite()
+        else :
+            self.virage_gauche()
             self.avancer()
-        else : 
-            self.virage_droite()
-            self.avancer()
-    self.virage_gauche()
-    return
+        while self.coord_actuelle[0]!=x:
+            if self.obstacle_avant() and self.obstacle_droite():
+                self.maj_obstacle_avant()
+                self.virage_gauche() 
+                self.avancer()
+                while self.obstacle_droite():
+                    self.maj_obstacle_droite()
+                    self.avancer()
+                self.virage_droite()
+                self.avancer()
+            elif self.obstacle_droite():
+                self.maj_obstacle_droite()
+                self.avancer()
+            else : 
+                self.virage_droite()
+                self.avancer()
+        self.virage_gauche()
+        return
 
     def exploration_allez(self,coord):
         self.avancer()

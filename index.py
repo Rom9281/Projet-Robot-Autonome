@@ -1,14 +1,14 @@
-# from pyimagesearch.motion_detection import SingleMotionDetector
 
 from flask import Response
 from flask import Flask
 from flask import render_template
+
 import cv2
 import matplotlib
-import rplidar
-from sympy import true
 matplotlib.use('TkAgg')
 import math
+
+import rplidar
 import serial
 
 import numpy as np

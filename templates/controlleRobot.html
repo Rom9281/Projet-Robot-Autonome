@@ -19,14 +19,14 @@
 
     <div class="controlleRobot">
         <div class="ControllerUsAv">
-          <p> Distance avant: {{distance}} cm</p>
+          <p> Distance avant: <span id="distanceAv"></span> cm</p>
           <button type="button" onclick="mesureDistanceAvant()">Mesure distance</button>
         </div>
         <div class="retourVideo">
             <img src="{{ url_for('video_feed_camera') }}" height="200">
         </div>
         <div class="ControllerUsAr">
-          <p> Distance arriere: {{distance}} cm</p>
+          <p> Distance arriere: <span id="distanceAr"></span> cm</p>
           <button type="button" onclick="mesureDistanceArriere()">Mesure distance</button>
         </div>
         <div class="controllerServo">

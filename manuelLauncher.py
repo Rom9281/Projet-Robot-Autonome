@@ -21,15 +21,20 @@ def envoyerCommande(ser, commande, param1, param2):
     message = f"{commande} : {param1} : {param2}\r\n"
     # print(ser.write(message.encode()))
     print(message)
+    # validation = ser.readline().decode()
+    validation = f"{commande} : ok"
     time.sleep(0.5)
-    return message
+    return validation
 
 
 def gestionUltrason(ser, commande):
-    message = envoyerCommande(ser, "USNDST", commande, 0)
+    validation = envoyerCommande(ser, "USNDST", commande, 0)
     # print(ser.readline().decode())
-
-    return message
+    if (validation.split()[-1] == "ok"):
+        # distance = ser.redline().decode()
+        distance = "AR : 20"
+        distance = distance.split()[-1] # on ne garde que la valeur
+    return validation , distance
 
 
 start = False
@@ -39,7 +44,7 @@ ser = 0
 
 def CommandesManuellesRobot(commande, param):
     global start, positionH, positionV, ser
-    message = ""
+    validation = {"validation": ""}
     if commande == "start":
         start = True
         
@@ -53,29 +58,29 @@ def CommandesManuellesRobot(commande, param):
                 
         
         elif (commande == "USNDST"):
-            message = gestionUltrason(ser, param)
-        
+            validation["validation"] , validation["distance"] = gestionUltrason(ser, param)
+
         elif (commande == "TIRLMP"):
-            message = envoyerCommande(ser, commande=commande, param1=param, param2 = 0)
+            validation["validation"] = envoyerCommande(ser, commande=commande, param1=param, param2 = 0)
 
         elif (commande == "MVMTR"):
-            message = envoyerCommande(ser, commande=commande, param1=param, param2 = 10)
+            validation["validation"] = envoyerCommande(ser, commande=commande, param1=param, param2 = 10)
             
         elif (commande == "PSTSRV"):
             if  param == "0":
-                positionV = (positionV + 10) % 180
-                message = envoyerCommande(ser, "PSTSRV", 1, positionV)
+                positionV = (positionV + 5) % 180
+                validation["validation"]= envoyerCommande(ser, "PSTSRV", 1, positionV)
         
             elif  param == "1":
-                positionH = (positionH + 10) % 180
-                message = envoyerCommande(ser, "PSTSRV", 0, positionH)
+                positionH = (positionH + 5) % 180
+                validation["validation"]= envoyerCommande(ser, "PSTSRV", 0, positionH)
             
             elif  param == "3":
-                positionV = (positionV - 10) % 180
-                message = envoyerCommande(ser, "PSTSRV", 1, positionV)
+                positionV = (positionV - 5) % 180
+                validation["validation"] = envoyerCommande(ser, "PSTSRV", 1, positionV)
 
             elif  param == "2":
-                positionH = (positionH - 10) % 180
-                message = envoyerCommande(ser, "PSTSRV", 0, positionH)
+                positionH = (positionH - 5) % 180
+                validation["validation"] = envoyerCommande(ser, "PSTSRV", 0, positionH)
 
-    return message
+    return validation
