@@ -12,19 +12,20 @@ from Model.Peripherique import Peripherique
 
 
 class Lidar(Peripherique):
-    def __init__(self,q_lidar):
+    def __init__(self):
         super(Lidar, self).__init__()
 
-        self.__q_lidar = q_lidar # Queue donnant les informations du lidar
+        # self.__q_lidar = q_lidar # Queue donnant les informations du lidar
 
-        # Configuration des commandes:
-        self.__config_commandes_path = "./Controller/commandes.json"
-        self.__comm = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
+        # # Configuration des commandes:
+        # self.__config_commandes_path = "./Controller/commandes.json"
+        # self.__comm = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
 
-        self.__min_quality = 8 # Qualité minimum de la mesure persue
+        # self.__min_quality = 8 # Qualité minimum de la mesure persue
 
-        self.__iter = 0
+        # self.__iter = 0
         self.__flag = True
+        self._serial = self._connect()
         
     """
     Permet la connection au lidar en utilisant la bibliotheque
@@ -35,8 +36,8 @@ class Lidar(Peripherique):
 
         try:
             ret = RPLidar(self._pin)
-            print(f"[$] Info Lidar : {self._getInfo}")
-            print(f"[$] Santé Lidar : {self._getHealth}")
+            print(f"[$] Info Lidar : {self._getInfo()}")
+            print(f"[$] Santé Lidar : {self._getHealth()}")
         except :
             print("[$] Failed to connect to the Lidar")
 
@@ -49,7 +50,7 @@ class Lidar(Peripherique):
         return self._serial.get_health()
     
     def __recupererMesures(self) -> list:
-        for scan in self._serial.iter_scans():
+        for scan in self._serial.iter_scans(max_buf_meas=500):
             break 
 
         return scan

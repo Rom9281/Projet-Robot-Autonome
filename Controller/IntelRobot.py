@@ -2,13 +2,15 @@ import os, time, signal, json
 from multiprocessing import Process
 import numpy as np
 
+from Model.Lidar import Lidar
+
 class IntelligenceRobot(Process):
     
-    def __init__(self,q_com,q_lidar,sem_start):
+    def __init__(self,q_com,q_info,sem_start):
         super(IntelligenceRobot, self).__init__()
 
-        self.__q_com = q_com
-        self.__q_lidar = q_lidar
+        self.__queue_com = q_com
+        self.__queue_info = q_info
         self.__sem_start = sem_start
         self.__flag = True
 
@@ -28,9 +30,12 @@ class IntelligenceRobot(Process):
         self.qualite_min = 8
         self.distance_min=450
 
-        self.M=np.zeros((self.taille_map,self.taille_map)) 
-        self.M[0][1]=1
-        self.M[1][0]=1
+        self.map=np.zeros((self.taille_map,self.taille_map)) 
+        self.map[0][1]=1
+        self.map[1][0]=1
+
+        # Lidar   pas top mais obliger pour plus de rapiditer et eviter de saturer la queue
+        self.lidar = Lidar()
         
     def run(self):
         signal.signal(signal.SIGTERM, self.signal_handler)
@@ -49,23 +54,40 @@ class IntelligenceRobot(Process):
         print("[*] Process Intelligence est arrêté")
         self.__flag = False
     
+    def obstacle(self, message):
+        obstacleAvant = False
+        obstacleGauche = False
+        obstacleDroite = False
+        for tuple in message:
+            if tuple[0]>=self.qualite_min:
+                if ( 80 <= tuple[1] < 146):
+                    obstacleGauche = True
+                elif ( 146 <= tuple[1] < 214):
+                    obstacleAvant = True
+                elif ( 214 <= tuple[1] < 280):
+                    obstacleDroite = True
 
-    def obstacle_avant (self,message) : 
+        return obstacleGauche, obstacleAvant, obstacleDroite
+
+    def obstacle_avant (self,message) :  # message = ( qualité , angle, distance)
         ret = False
         for tuple in message:
             if tuple[0]>=self.qualite_min:
-                if tuple[1] < 168 and tuple[1]>=146: 
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_avant_g()
-                if  tuple[1] >= 168 and tuple[1]<192:
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_avant_c()
-                if  tuple[1] >= 192 and tuple[1]<214:
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_avant_d() 
+                # if 146 <= tuple[1] < 168: 
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_avant_g()
+                # if  168 <= tuple[1] < 192:
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_avant_c()
+                # if  192 <= tuple[1] < 214:
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_avant_d()   
+                if ( 146 <= tuple[1] < 214):
+                    ret = True
+                    break
         return ret
 
 
@@ -73,18 +95,21 @@ class IntelligenceRobot(Process):
         ret = False
         for tuple in message:
             if tuple[0]>= self.qualite_min:
-                if tuple[1] >= 214 and tuple[1]<236: 
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_droite_g()
-                if  tuple[1] >= 236 and tuple[1]<258:
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_droite_c()
-                if  tuple[1] >= 258 and tuple[1]<280:
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_droite_d() 
+                # if 214 <= tuple[1] < 236: 
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_droite_g()
+                # if  236 <= tuple[1] < 258:
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_droite_c()
+                # if  258 <= tuple[1] < 280:
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_droite_d() 
+                if ( 214 <= tuple[1] < 280):
+                    ret = True
+                    break
         return ret
 
 
@@ -92,18 +117,21 @@ class IntelligenceRobot(Process):
         ret = False
         for tuple in message:
             if tuple[0]>= self.qualite_min:
-                if tuple[1] >= 80 and tuple[1]<102: 
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_gauche_g()
-                if  tuple[1] >= 102 and tuple[1]<124:
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_gauche_c()
-                if  tuple[1] >= 124 and tuple[1]<146:
-                    if tuple[2]<= self.distance_min:
-                        ret = True
-                        #maj_gauche_d() 
+                # if 80 <= tuple[1] < 102: 
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_gauche_g()
+                # if 102 <= tuple[1] < 124:
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_gauche_c()
+                # if  124 <= tuple[1] < 146:
+                #     if tuple[2]<= self.distance_min:
+                #         ret = True
+                #         #maj_gauche_d() 
+                if ( 80 <= tuple[1] < 146):
+                    ret = True
+                    break
         return ret
 
 
@@ -112,12 +140,12 @@ class IntelligenceRobot(Process):
 
     def virage_droite(self):
         self.orientation(1)
-        self.__q_com.put(f'{self.__commmande["tourner_droite"]}:90')
+        self.__queue_com.put(f'{self.__commandes["tourner_droite"]}:90')
 
 
     def virage_gauche(self):
         self.orientation(-1)
-        self.__q_com.put(f'{self.__commmande["tourner_gauche"]}:90')
+        self.__queue_com.put(f'{self.__commandes["tourner_gauche"]} : 90')
 
 
     def avancer(self):
@@ -131,18 +159,12 @@ class IntelligenceRobot(Process):
         else :
             self.coord_actuelle[0]-=1
 
-        self.__q_com.put(f'{self.__commmande["avancer"]}:5')
+        self.__queue_com.put(f'{self.__commandes["avancer"]} : 5')
 
     #           fonction de base
 
     def orientation(self,p):
-        if self.orientation_actuelle==3 and p==1:
-            self.orientation_actuelle = 0
-        elif self.orientation_actuelle==0 and p==-1:
-            self.orientation_actuelle = 3
-        else :
-            self.orientation_actuelle += p
-        return
+        self.orientation_actuelle = (self.orientation_actuelle + p ) % 4
 
     
 
@@ -169,55 +191,58 @@ class IntelligenceRobot(Process):
         return np.copy(self.coord_actuelle)
 
     def obstacle_fond(self):
-        for i in range(self.coord_actuelle[0]-1+self.distance_min_mvmt,self.coord_actuelle[0]+self.distance_min_mvmt):
+        for i in range(
+            self.coord_actuelle[0] - 1 + self.distance_min_mvmt, # min
+            self.coord_actuelle[0] + self.distance_min_mvmt # max
+            ):
             ymin=np.copy(self.taille_map)
-            for j in range(ymin//2,ymin):
-                if self.M[i][j]==1:
+            for j in range(ymin // 2,ymin):
+                if self.map[i][j]==1:
                     if ymin>j:
                         ymin=j
         return ymin
 
     def fond(self):
         kmin=0
-        for i,val in enumerate(self.M):
+        for i,val in enumerate(self.map):
                     k=max(val)
                     if k>kmin:
-                                kmin=k
+                        kmin=k
         return(kmin)
                                     
 
 
     def maj_obstacle_gauche(self):
         if self.orientation_actuelle == 0:
-            self.M[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
+            self.map[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
         elif self.orientation_actuelle == 1:
-                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
+                self.map[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
         elif self.orientation_actuelle == 2:
-            self.M[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
+            self.map[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
         else :
-                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
+                self.map[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
         return
 
     def maj_obstacle_droite(self):
         if self.orientation_actuelle == 0:
-            self.M[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
+            self.map[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
         elif self.orientation_actuelle == 1:
-                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
+                self.map[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
         elif self.orientation_actuelle == 2:
-            self.M[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
+            self.map[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
         else :
-                self.M[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
+                self.map[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
         return
 
     def maj_obstacle_avant(self):
         if self.orientation_actuelle == 0:
-            self.M[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
+            self.map[self.coord_actuelle[0]][self.coord_actuelle[1]+1]=1
         elif self.orientation_actuelle == 1:
-                self.M[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
+                self.map[self.coord_actuelle[0]+1][self.coord_actuelle[1]]=1
         elif self.orientation_actuelle == 2:
-            self.M[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
+            self.map[self.coord_actuelle[0]][self.coord_actuelle[1]-1]=1
         else :
-                self.M[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
+                self.map[self.coord_actuelle[0]-1][self.coord_actuelle[1]]=1
         return
 
 
@@ -277,21 +302,40 @@ class IntelligenceRobot(Process):
             self.avancer()
         return
 
+    # def premier_tour(self):
+    #     self.avancer()
+    #     while self.coord_actuelle != self.coord_init :
+    #         time.sleep(0.1)
+    #         if self.obstacle_gauche():
+    #             self.maj_obstacle_gauche()
+    #             if self.obstacle_avant():
+    #                 self.maj_obstacle_avant()
+    #                 self.virage_droite()
+    #             else :
+    #                 self.avancer()
+    #         else:
+    #             self.virage_gauche()
+
+    #     self.taille_map=self.fond()
+    #     return
+
     def premier_tour(self):
         self.avancer()
         while self.coord_actuelle != self.coord_init :
             time.sleep(0.1)
-            if self.obstacle_gauche():
+            # self.__queue_com.put(f'{self.__commandes["lidarMesure"]} : 0')
+            # data = self.__queue_com.get(block=True, timeout=None)
+            data = self.lidar.__recupererMesures()
+            obstGauche, obstAvant, obstDroite = self.obstacle(data)
+            if obstGauche:
                 self.maj_obstacle_gauche()
-                if self.obstacle_avant():
+                if obstAvant:
                     self.maj_obstacle_avant()
                     self.virage_droite()
-                    self.avancer()
                 else :
                     self.avancer()
             else:
                 self.virage_gauche()
-                self.avancer()
 
         self.taille_map=self.fond()
         return 

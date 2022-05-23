@@ -11,6 +11,7 @@ Description :  Modélisation du robot en entier
 
 import json, time,signal,os
 from multiprocessing import Process
+from Controller.Camera import Camera
 from Model.HautParleur import HautParleur
 
 # from Model.Serializer import Serializer
@@ -43,7 +44,7 @@ class CorpsRobot(Process):
         # On configure la carte a laquelle va être connecte les périphériques
         self.__stm = STM()
         
-        self.__lidar = Lidar(self.__queue_info)
+        self.__lidar = Lidar()
 
         # On ajoute les elements connectés au stm32
         # Initialisation des ServoMoteur
@@ -62,6 +63,9 @@ class CorpsRobot(Process):
         # Initialisation des Capteurs Ultrason
         self.__ultrasonAvant = Ultrason(self.__stm, position=0)
         self.__ultrasonArriere = Ultrason(self.__stm, position=1)
+        
+        # camera
+        self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
 
 
     
@@ -99,6 +103,10 @@ class CorpsRobot(Process):
         commande = commande.split(":")
         
         messageValidation = False
+
+        # lidar
+        if (commande[0] == self.commandes["lidarMesure"] ):
+            messageValidation = self.__lidar.__recupererMesures()
         # déplacements
         if(commande[0] == self.commandes["avancer"]):
             messageValidation = self.__serializer.avancer(commande[1])

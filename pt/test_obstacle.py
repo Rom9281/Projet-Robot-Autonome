@@ -8,3 +8,4 @@ while (1):
     print("avant :",fo.obstacle_avant(scan))
     print("droite :",fo.obstacle_droite(scan))
     print("gauche :",fo.obstacle_gauche(scan))
+    print( "\n\n\n")

@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Robot Controler</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" href="{{url_for('static', filename='css/controlleRobot.css')}}">
   </head>
   <body>
@@ -17,61 +19,80 @@
         </p>
     </div>
 
-    <div class="controlleRobot">
-        <div class="ControllerUsAv">
+    <div class="container-fluid controlleRobot ">
+      <div class="row">
+        <div class=" col ControllerUsAv">
           <p> Distance avant: <span id="distanceAv"></span> cm</p>
-          <button type="button" onclick="mesureDistanceAvant()">Mesure distance</button>
+          <button class="btn" type="button" onclick="mesureDistanceAvant()">Mesure distance</button>
         </div>
-        <div class="retourVideo">
-            <img src="{{ url_for('video_feed_camera') }}" height="200">
+        <div class="col-6 retourVideo">
+            <img src="{{ url_for('video_feed_camera') }}" class="rounded mx-auto d-block" height="300">
         </div>
-        <div class="ControllerUsAr">
+        <div class="col ControllerUsAr">
           <p> Distance arriere: <span id="distanceAr"></span> cm</p>
-          <button type="button" onclick="mesureDistanceArriere()">Mesure distance</button>
+          <button class="btn" type="button" onclick="mesureDistanceArriere()">Mesure distance</button>
         </div>
-        <div class="controllerServo">
+      </div>
+
+      <div class="row">
+        <div class="col controllerServo">
           <h5 > Controller visé</h5>
-            <button class="custom a" onclick="bas()" >&#x25BC</a>
-            <button class="custom b" onclick="droite()">&#x25B6</a>
-            <button class="custom x" onclick="gauche()">&#x25C0</a>
-            <button class="custom y" onclick="haut()">&#x25B2</a>
+          <div class="btn-group"> 
+            <button class="btn a" onclick="bas()" >&#x25BC</a>
+            <button class="btn b" onclick="droite()">&#x25B6</a>
+            <button class="btn x" onclick="gauche()">&#x25C0</a>
+            <button class="btn y" onclick="haut()">&#x25B2</a>
+          </div>
         </div>
 
-        <div class="ButtonContolle">
-          <button id="start" type="button" onclick="start()"> Start</button>
-          <button id="stop" type="button" onclick="stop()"> Stop</button>
-        </div>
+        <div class="row">
 
         
-        <div class="ControllerLampe">
-          <button type="button" onclick="tireLampe()">Tire Lampe (t)</button>
-          <button type="button" onclick="allumerLampe()">Allumer Lampe (t)</button>
-          <button type="button" onclick="eteindreLampe()">Eteindre Lampe (t)</button>
+          <div class="col ButtonContolle">
+            <div class="btn-group">
+              <button class="btn btn-success" id="start" type="button" onclick="start()"> Start</button>
+              <button class="btn btn-danger" id="stop" type="button" onclick="stop()"> Stop</button>
+            </div>
+          </div>
+
           
-        </div>
-        
-        <div class="ControllerHP">
-          <button type="button" onclick="klaxon()">Klaxon (c)</button>
+          <div class="col ControllerLampe">
+            <div class="btn-group">
+              <button class="btn" type="button" onclick="tireLampe()">Tire Lampe (t)</button>
+              <button class="btn" type="button" onclick="allumerLampe()">Allumer Lampe (t)</button>
+              <button class="btn" type="button" onclick="eteindreLampe()">Eteindre Lampe (t)</button>
+            </div>
+            
+          </div>
           
+          <div class="col ControllerHP">
+            <button class="btn" type="button" onclick="klaxon()">Klaxon (c)</button>
+            
+          </div>
         </div>
 
-        <div class="controllerMouvement">
+
+        <div class="col controllerMouvement">
           <h5>Controller deplacement</h5>
-          <button class="custom a" onclick="avancer()">&#x25BC</a>
-          <button class="custom b" onclick="rotDroite()">&#x25B6</a>
-          <button class="custom x" onclick="rotGauche()">&#x25C0</a>
-          <button class="custom y" onclick="recule()">&#x25B2</a>
-        </div>
+          <div class="btn-group" aria-label="Basic mixed styles example">
+            <button class="btn x" onclick="avancer()">&#x25BC</a>
+            <button class="btn b" onclick="rotDroite()">&#x25B6</a>
+            <button class="btn x" onclick="rotGauche()">&#x25C0</a>
+            <button class="btn y" onclick="recule()">&#x25B2</a>
+          </div>
 
-        <div class="retourLidar">
-          <img src="{{ url_for('video_feed_lidar') }}" height="200">
+        </div>
+      </div>
+      <div class="retourLidar">
+        <img src="{{ url_for('video_feed_lidar') }}" class="rounded mx-auto d-block" height="300">
       </div>
     </div>
 
 
   </body>
 
-
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/controlleRobot.js')}}"></script>
  
 </html>

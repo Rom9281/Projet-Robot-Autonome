@@ -2,7 +2,7 @@ from rplidar import RPLidar
 
 def scan ():
     ret = []
-    lidar = RPLidar('/dev/ttyUSB1')
+    lidar = RPLidar('COM8')
     for i, scan in enumerate(lidar.iter_scans()):
         ret.append(scan)
         if i > 0:

@@ -2,7 +2,7 @@
     "Lidar":
     {
         "Baud":19200,
-        "Pin":"/dev/ttyUSB0"
+        "Pin":"COM8"
     },
     
     "STM":

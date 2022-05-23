@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Robot Controler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" href="{{url_for('static', filename='css/controlleRobot.css')}}">
   </head>
   <body>
@@ -16,34 +17,46 @@
         </p>
     </div>
 
-    <div class="controlleRobot">
-        <div class="ControllerUsAv">
-          <p> Distance avant: {{distance}} cm</p>
+    <div class="container-fluid controlleRobot ">
+      <div class="row">
+        <div class=" col ControllerUsAv">
+          <p> Distance avant: <span id="distanceAv"></span> cm</p>
+          <button class="btn" type="button" onclick="mesureDistanceAvant()">Mesure distance</button>
+        </div>
+        <div class="col-6 retourVideo">
+            <img src="{{ url_for('video_feed_camera') }}" class="rounded mx-auto d-block" height="300">
+        </div>
+        <div class="col ControllerUsAr">
+          <p> Distance arriere: <span id="distanceAr"></span> cm</p>
+          <button class="btn" type="button" onclick="mesureDistanceArriere()">Mesure distance</button>
+        </div>
+      </div>
+
+     
+        <div class="row">
+
+        
+          <div class="col ButtonContolle">
+            <div class="btn-group">
+              <button class="btn btn-success" id="start" type="button" onclick="start()"> Start</button>
+              <button class="btn btn-danger" id="stop" type="button" onclick="stop()"> Stop</button>
+            </div>
+          </div>
+
           
-        </div>
-        <div class="retourVideo">
-            <img src="{{ url_for('video_feed_camera') }}" height="200">
-        </div>
-        <div class="ControllerUsAr">
-          <p> Distance arriere: {{distance}} cm</p>
-          
-        </div>
-
-        <div class="ButtonContolle">
-            <button id="start" type="button" onclick="start()"> Start</button>
-            <button id="stop" type="button" onclick="stop()"> Stop</button>
-        </div>
 
 
-        <div class="retourLidar">
-          <img src="{{ url_for('video_feed_lidar') }}" height="200">
+        </div>
+      </div>
+      <div class="retourLidar">
+        <img src="{{ url_for('video_feed_lidar') }}" class="rounded mx-auto d-block" height="300">
       </div>
     </div>
 
 
   </body>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{{url_for('static', filename='js/automatiqueRobot.js')}}"></script>
  
 </html>

@@ -20,16 +20,17 @@ from flask import Blueprint
 automaticLauncher = Blueprint("automaticLauncher", __name__)
 queue_commande = mp.Queue() # queue contenant les commandes
 queue_info = mp.Queue() # queue contenant les informations retournées
-
+print('Queue demarrer')
 sem_start = mp.Semaphore(0)
-corps = CorpsRobot(queue_commande, queue_info, sem_start)
 
+corps = CorpsRobot(queue_commande, queue_info, sem_start)
+print('Corps demarrer')
 # On ajoute une intelligence
 intel= IntelligenceRobot(queue_commande, queue_info,sem_start)
-
+print("Intelligence demarrer")
 # On ajoute le process de la camera
 camera = Camera(queue_commande, queue_info,sem_start)
-
+print('camera demarrer')
 @automaticLauncher.route("/auto/<action>")
 def robotAuto(action):
     if action == "start":

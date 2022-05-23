@@ -51,7 +51,7 @@ def video_feed_camera():
 def video_feed_lidar():
 	# return the response generated along with the specific media
 	# type (mime type)
-	return Response(generateLidar(),
+	return Response(lidarScan(),
 		mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 
@@ -187,7 +187,7 @@ def cleanData(data):
 
 
 def get_data():
-    lidar = rplidar.RPLidar('COM14', baudrate=115200)
+    lidar = rplidar.RPLidar('COM8', baudrate=115200)
     for scan in lidar.iter_scans(max_buf_meas=500):
         break
     lidar.stop()
@@ -195,21 +195,24 @@ def get_data():
 
 def lidarScan():
     fig = plt.figure()
+    ax = fig.add_subplot(111)
+    
+    i = 0
+    
     while True:
+        if(i%7==0):
+            x = []
+            y = []
+        current_data=get_data()
+        for point in current_data:
+            if point[0]==15:
+                x.append(point[2]*np.sin(np.radians(point[1])))
+                y.append(point[2]*np.cos(np.radians(point[1])))
+
+        ax.scatter(x, y, s=0.5, c="limegreen")
+        ax.axis('equal')
+        ax.axis('off')
         fig.canvas.draw()
-        for i in range(1000000):
-            if(i%7==0):
-                x = []
-                y = []
-            print(i)
-            current_data=get_data()
-            for point in current_data:
-                if point[0]==15:
-                    x.append(point[2]*np.sin(np.radians(point[1])))
-                    y.append(point[2]*np.cos(np.radians(point[1])))
-            plt.clf()
-            plt.scatter(x, y)
-            plt.pause(.1)
         img = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8,
                 sep='')
         img  = img.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -220,7 +223,7 @@ def lidarScan():
         (flag, encodedImage) = cv2.imencode(".jpg", img)
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
             bytearray(encodedImage) + b'\r\n')
- 
+
         i += 1
         k = cv2.waitKey(33) & 0xFF
         if k == 27:

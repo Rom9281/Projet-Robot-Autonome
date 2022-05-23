@@ -1,49 +1,37 @@
-import matplotlib
-matplotlib.use('TkAgg')
-
 import numpy as np
-import cv2
 import matplotlib.pyplot as plt
+from rplidar import RPLidar
+import math, time
 
-fig = plt.figure()
-# cap = cv2.VideoCapture(0)
+from sympy import li
 
-
-x1 = np.linspace(0.0, 5.0)
-x2 = np.linspace(0.0, 2.0)
-
-y1 = np.cos(2 * np.pi * x1) * np.exp(-x1)
-y2 = np.cos(2 * np.pi * x2)
-
-
-line1, = plt.plot(x1, y1, 'ko-')        # so that we can update data later
-
-for i in range(1000):
-    # update data
-    line1.set_ydata(np.cos(2 * np.pi * (x1+i*3.14/2) ) * np.exp(-x1) )
-
-    # redraw the canvas
-    fig.canvas.draw()
-
-    # convert canvas to image
-    img = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8,
-            sep='')
-    img  = img.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
-    # img is rgb, convert to opencv's default bgr
-    img = cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
-
-
-    # display image with opencv or any operation you like
-    cv2.imshow("plot",img)
-
-    (flag, encodedImage) = cv2.imencode(".jpg", img)
-    # yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
-    #     bytearray(encodedImage) + b'\r\n')
-    # # display camera feed
-    # ret,frame = cap.read()
-    # cv2.imshow("cam",frame)
-
-    k = cv2.waitKey(33) & 0xFF
-    if k == 27:
+def get_data():
+    # lidar = RPLidar('COM8', baudrate=115200)
+    for scan in lidar.iter_scans(max_buf_meas=1000):
         break
+    lidar.stop()
+    return scan
+
+i = 0
+lidar = RPLidar('COM8', baudrate=115200)
+
+
+while True:
+
+    if (i % 5 == 0):
+        x = []
+        y = []
+    current_data=get_data()
+
+    for point in current_data:
+        if point[0]==15:
+            x.append(point[2]*np.sin(np.radians(point[1])))
+            y.append(point[2]*np.cos(np.radians(point[1])))
+    plt.clf()
+    plt.scatter(x, y, s=0.5, c="limegreen")
+    plt.pause(.1)
+    i += 1
+
+
+line1.set_ydata(np.cos(2 * np.pi * (x1+i*3.14/2) ) * np.exp(-x1) )
+
