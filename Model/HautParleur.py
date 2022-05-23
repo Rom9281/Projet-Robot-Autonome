@@ -1,10 +1,11 @@
-
 """
+CPE Lyon 
 
-Model du haut parleur
+Projet Transversal
+
+Groupe B1
 
 Fares Zaghouane
-
 """
 from Model.PeripheriqueCarte import PeripheriqueCarte
 from Model.Carte import Carte

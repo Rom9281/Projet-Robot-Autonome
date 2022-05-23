@@ -1,8 +1,14 @@
 """
-Modele abstrait d'une carte
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane
 """
 
-from calendar import c
+
 from Model.Peripherique import Peripherique
 
 

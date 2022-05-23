@@ -1,27 +1,28 @@
 """
+CPE Lyon 
+
 Projet Transversal
 
 Groupe B1
 
-Créateur: Romain GAUD
-Contributeur : 
-
-Description :  Modélisation du robot en entier
+Romain GAUD, Fares Zaghouane
 """
 
+# Librairies externes
 import json, time,signal,os
 from multiprocessing import Process
-from Model.HautParleur import HautParleur
 
-# from Model.Serializer import Serializer
+# Librairies personelles
 from Model.STM import STM
 from Model.ServoMoteur import ServoMoteur
 from Model.Serializer import Serializer
 from Model.LED import LED
 from Model.Lidar import Lidar
 from Model.Ultrason import Ultrason
+from Model.HautParleur import HautParleur
 
 class CorpsRobot(Process):
+    """Processus gerant gloablement les membres du robot"""
     
     def __init__(self,queue_com,queue_info,sem_start):
         super(CorpsRobot, self).__init__()
@@ -96,10 +97,12 @@ class CorpsRobot(Process):
         print("Je suis sorti de la boucle je me termine Corps")
     
     def gererCommande(self, commande):
-        commande = commande.split(":")
-        
+        """Permet d'appeller la partie du corps voulue selon la commande passee en entree"""
+        commande = commande.split(":") # Traitement de la comande pour la rendre risible
         messageValidation = False
-        # déplacements
+        
+        # déplacements lies au serializer
+        
         if(commande[0] == self.commandes["avancer"]):
             messageValidation = self.__serializer.avancer(commande[1])
             
@@ -111,9 +114,9 @@ class CorpsRobot(Process):
         
         elif(commande[0] == self.commandes["reculer"]):
             messageValidation = self.__serializer.reculer(commande[1])
-        
 
-        # rotation tourelle
+        # rotation de la tourelle
+        
         elif(commande[0] == self.commandes["automatique"]):
             messageValidation = self.__servo_horizontal.auto()
 
@@ -135,15 +138,14 @@ class CorpsRobot(Process):
         elif(commande[0] == self.commandes["rot_hor_droite"]):
             messageValidation = self.__servo_horizontal.rotationDroite(commande[1])
         
-        
         elif(commande[0] == self.commandes["rot_ver_droite"]):
             messageValidation = self.__servo_vertical.petiteRotationAjout()
         
         elif(commande[0] == self.commandes["rot_ver_gauche"]):
             messageValidation = self.__servo_vertical.petiteRotationRetire()
         
-
         # Commandes de la led
+        
         elif(commande[0] == self.commandes["tirer"]):
             messageValidation = self.__led.tirer()
         
@@ -155,11 +157,12 @@ class CorpsRobot(Process):
         
 
         # Commande haut parleur
+        
         elif(commande[0] == self.commandes["klaxon"]):
             messageValidation = self.__hautParleur.klaxon()
         
-        
         # Commandes ultrason
+        
         elif(commande[0] == self.commandes["mesureUltrasonAv"]):
             messageValidation = self.__ultrasonAvant.recupererDistance()
             if messageValidation:
@@ -170,19 +173,19 @@ class CorpsRobot(Process):
             if messageValidation:
                 distance = self.__ultrasonArriere.distance
 
-         
         else:
-            print("Unerconised")
+            print("[$]Erreur : Commande non connue")
 
         self.__queue_info.put(messageValidation)
 
         if ( ( commande[0] == self.commandes["mesureUltrasonAv"] or  
             commande[0] == self.commandes["mesureUltrasonAr"] ) and 
-            messageValidation ):
-            self.__queue_info.put(distance)
+            messageValidation ): 
+            self.__queue_info.put(distance) # Donne l'information sur la distance
     
 
     def signal_handler(self):
+        """ Methode pour arreter le processus"""
         print("[*] Process Corps est arrêté")
         self.__flag = False
         self.__sem_start.release()

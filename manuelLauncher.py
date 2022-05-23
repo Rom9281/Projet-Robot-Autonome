@@ -1,11 +1,15 @@
-import json
+"""
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Fares Zaghouane
+"""
+
+import json,serial, matplotlib.pyplot as plt, numpy as np,random, math, time
 from os import kill
-
-import serial
-import matplotlib.pyplot as plt
-import numpy as np
-import random, math, time
-
 from flask import Blueprint
 
 manuelLauncher = Blueprint("manuelLauncher", __name__ )

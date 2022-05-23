@@ -1,8 +1,20 @@
-import os, time, signal, json
+"""
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane, Maxime Chouraqui
+"""
+
+# Librairies importes
+import os, time, signal, json,  numpy as np
 from multiprocessing import Process
-import numpy as np
+
 
 class IntelligenceRobot(Process):
+    """ Classe Permetant au robot d'avoir une intelligence """
     
     def __init__(self,q_com,q_lidar,sem_start):
         super(IntelligenceRobot, self).__init__()
@@ -10,7 +22,7 @@ class IntelligenceRobot(Process):
         self.__q_com = q_com
         self.__q_lidar = q_lidar
         self.__sem_start = sem_start
-        self.__flag = True
+        self.__break = False
 
         # Configuration des commandes
         self.__config_commandes_path = "./Controller/commandes.json"
@@ -31,13 +43,16 @@ class IntelligenceRobot(Process):
         self.M=np.zeros((self.taille_map,self.taille_map)) 
         self.M[0][1]=1
         self.M[1][0]=1
-        
+    
+    
     def run(self):
-        signal.signal(signal.SIGTERM, self.signal_handler)
+        """ Methode principale pour demarer le processus """
+        
+        signal.signal(signal.SIGTERM, self.signal_handler)  # Association d'un signal de fin a une methode
 
         print("[$] %s:%s : Process Intelligence actif"%(os.getppid(),os.getpid()))
 
-        self.__sem_start.release()
+        self.__sem_start.release() # Permet d'attendre la fin du chargement du lancement principal
 
         self.premier_tour()
 
@@ -46,8 +61,9 @@ class IntelligenceRobot(Process):
             
     
     def signal_handler(self,signum,frame):
+        """ Methode pour arreter le processus"""
         print("[*] Process Intelligence est arrêté")
-        self.__flag = False
+        self.__break = True
     
 
     def obstacle_avant (self,message) : 
@@ -70,58 +86,51 @@ class IntelligenceRobot(Process):
 
 
     def obstacle_droite (self,message) :
+        """Detection d'un obstacle a gauche"""
         ret = False
         for tuple in message:
             if tuple[0]>= self.qualite_min:
                 if tuple[1] >= 214 and tuple[1]<236: 
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        #maj_droite_g()
                 if  tuple[1] >= 236 and tuple[1]<258:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        #maj_droite_c()
                 if  tuple[1] >= 258 and tuple[1]<280:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        #maj_droite_d() 
         return ret
 
 
     def obstacle_gauche (self,message) : 
+        """Detection d'un obstacle a gauche"""
         ret = False
         for tuple in message:
             if tuple[0]>= self.qualite_min:
                 if tuple[1] >= 80 and tuple[1]<102: 
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        #maj_gauche_g()
                 if  tuple[1] >= 102 and tuple[1]<124:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        #maj_gauche_c()
                 if  tuple[1] >= 124 and tuple[1]<146:
                     if tuple[2]<= self.distance_min:
                         ret = True
-                        #maj_gauche_d() 
         return ret
-
-
-
-    #      Recuperation des fonctions de base (avancer,tourner,...)
+    
 
     def virage_droite(self):
+        """ Methode permettant d'ajouter la commande tourner a droite a la queue des commandes"""
         self.orientation(1)
-        self.__q_com.put(f'{self.__commmande["tourner_droite"]}:90')
-
+        self.__q_com.put(f'{self.__commmande["tourner_droite"]}:90') # Passe une commande dans la queue
 
     def virage_gauche(self):
+        """ Methode permettant d'ajouter la commande tourner a gauche a la queue des commandes"""
         self.orientation(-1)
-        self.__q_com.put(f'{self.__commmande["tourner_gauche"]}:90')
-
+        self.__q_com.put(f'{self.__commmande["tourner_gauche"]}:90') # Passe une commande dans la queue
 
     def avancer(self):
-
+        """ Methode permettant d'ajouter la commande avancer a la queue des commandes"""
         if self.orientation_actuelle == 0:
             self.coord_actuelle[1]+=1
         elif self.orientation_actuelle == 1:
@@ -133,9 +142,8 @@ class IntelligenceRobot(Process):
 
         self.__q_com.put(f'{self.__commmande["avancer"]}:5')
 
-    #           fonction de base
-
     def orientation(self,p):
+        """Gestion de l'orientation du robot"""
         if self.orientation_actuelle==3 and p==1:
             self.orientation_actuelle = 0
         elif self.orientation_actuelle==0 and p==-1:
@@ -143,9 +151,6 @@ class IntelligenceRobot(Process):
         else :
             self.orientation_actuelle += p
         return
-
-    
-
 
     def mise_en_position(self):
         if self.compteur_exploration == 1:
@@ -179,13 +184,11 @@ class IntelligenceRobot(Process):
 
     def fond(self):
         kmin=0
-        for i,val in enumerate(self.M):
-                    k=max(val)
-                    if k>kmin:
-                                kmin=k
-        return(kmin)
-                                    
-
+        for i,val in enumerate(self.M): 
+            k=max(val)
+            if k>kmin:
+                kmin=k
+        return(kmin)                         
 
     def maj_obstacle_gauche(self):
         if self.orientation_actuelle == 0:
@@ -280,6 +283,8 @@ class IntelligenceRobot(Process):
     def premier_tour(self):
         self.avancer()
         while self.coord_actuelle != self.coord_init :
+            if self.__break:
+                break
             time.sleep(0.1)
             if self.obstacle_gauche():
                 self.maj_obstacle_gauche()
@@ -299,6 +304,8 @@ class IntelligenceRobot(Process):
     def deuxieme_tour(self):
         coord_utile=[0,0]
         for i in range((self.taille_map-2)//self.distance_decalage-1):
+            if self.__break:
+                break
             time.sleep(0.1)
             coord_utile=self.mise_en_position()
             self.exploration_allez(coord_utile)

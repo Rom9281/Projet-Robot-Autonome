@@ -1,4 +1,12 @@
 """
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane
+
 Programme de lancement principal du robot,
 Agis pour le moment également comme l'interface graphique avec l'utilisateur
 """

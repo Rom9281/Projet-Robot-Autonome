@@ -1,3 +1,13 @@
+"""
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane
+"""
+
 from http.client import FAILED_DEPENDENCY
 
 from Model.PeripheriqueCarte import PeripheriqueCarte

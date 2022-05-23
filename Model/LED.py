@@ -1,5 +1,9 @@
 """
-Modele de la LED
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
 
 Fares Zaghouane
 """

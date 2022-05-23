@@ -1,4 +1,12 @@
+"""
+CPE Lyon 
 
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane
+"""
 
 import enum
 from Model.PeripheriqueCarte import PeripheriqueCarte

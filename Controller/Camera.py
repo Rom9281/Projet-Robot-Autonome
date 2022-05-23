@@ -1,3 +1,13 @@
+"""
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane, Hugo Rodriguez
+"""
+
 ##Bibliothèques
 import cv2 ,numpy as np,matplotlib.pyplot as plt,signal,os, math,json, time
 from multiprocessing import Process
