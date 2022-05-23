@@ -1,5 +1,12 @@
+"""
+CPE Lyon 
 
-from sympy import N
+Projet Transversal
+
+Groupe B1
+
+Fares Zaghouane
+"""
 from Model.PeripheriqueCarte import PeripheriqueCarte
 from Model.Carte import Carte
 

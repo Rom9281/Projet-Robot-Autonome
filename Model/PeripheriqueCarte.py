@@ -1,4 +1,14 @@
 """
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane
+"""
+
+"""
 Objet etant en peripherie d'une carte connectée à la Pi
 Connection au deuxième degré
 Possède une carte a qui passer des instructions pour se faire activer

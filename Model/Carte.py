@@ -1,4 +1,14 @@
-from calendar import c
+"""
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane
+"""
+
+
 from Model.Peripherique import Peripherique
 
 

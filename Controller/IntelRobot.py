@@ -1,10 +1,22 @@
-import os, time, signal, json
+"""
+CPE Lyon 
+
+Projet Transversal
+
+Groupe B1
+
+Romain GAUD, Fares Zaghouane, Maxime Chouraqui
+"""
+
+# Librairies importes
+import os, time, signal, json,  numpy as np
 from multiprocessing import Process
-import numpy as np
+
 
 from Model.Lidar import Lidar
 
 class IntelligenceRobot(Process):
+    """ Classe Permetant au robot d'avoir une intelligence """
     
     def __init__(self,q_com,q_info,sem_start):
         super(IntelligenceRobot, self).__init__()
@@ -12,7 +24,7 @@ class IntelligenceRobot(Process):
         self.__queue_com = q_com
         self.__queue_info = q_info
         self.__sem_start = sem_start
-        self.__flag = True
+        self.__break = False
 
         # Configuration des commandes
         self.__config_commandes_path = "./Controller/commandes.json"
@@ -33,16 +45,16 @@ class IntelligenceRobot(Process):
         self.map=np.zeros((self.taille_map,self.taille_map)) 
         self.map[0][1]=1
         self.map[1][0]=1
-
-        # Lidar   pas top mais obliger pour plus de rapiditer et eviter de saturer la queue
-        self.lidar = Lidar()
-        
+    
+    
     def run(self):
-        signal.signal(signal.SIGTERM, self.signal_handler)
+        """ Methode principale pour demarer le processus """
+        
+        signal.signal(signal.SIGTERM, self.signal_handler)  # Association d'un signal de fin a une methode
 
         print("[$] %s:%s : Process Intelligence actif"%(os.getppid(),os.getpid()))
 
-        self.__sem_start.release()
+        self.__sem_start.release() # Permet d'attendre la fin du chargement du lancement principal
 
         self.premier_tour()
 
@@ -51,8 +63,9 @@ class IntelligenceRobot(Process):
             
     
     def signal_handler(self,signum,frame):
+        """ Methode pour arreter le processus"""
         print("[*] Process Intelligence est arrêté")
-        self.__flag = False
+        self.__break = True
     
     def obstacle(self, message):
         obstacleAvant = False
@@ -92,6 +105,7 @@ class IntelligenceRobot(Process):
 
 
     def obstacle_droite (self,message) :
+        """Detection d'un obstacle a gauche"""
         ret = False
         for tuple in message:
             if tuple[0]>= self.qualite_min:
@@ -114,6 +128,7 @@ class IntelligenceRobot(Process):
 
 
     def obstacle_gauche (self,message) : 
+        """Detection d'un obstacle a gauche"""
         ret = False
         for tuple in message:
             if tuple[0]>= self.qualite_min:
@@ -133,23 +148,22 @@ class IntelligenceRobot(Process):
                     ret = True
                     break
         return ret
-
-
-
-    #      Recuperation des fonctions de base (avancer,tourner,...)
+    
 
     def virage_droite(self):
+        """ Methode permettant d'ajouter la commande tourner a droite a la queue des commandes"""
         self.orientation(1)
         self.__queue_com.put(f'{self.__commandes["tourner_droite"]}:90')
 
 
     def virage_gauche(self):
+        """ Methode permettant d'ajouter la commande tourner a gauche a la queue des commandes"""
         self.orientation(-1)
         self.__queue_com.put(f'{self.__commandes["tourner_gauche"]} : 90')
 
 
     def avancer(self):
-
+        """ Methode permettant d'ajouter la commande avancer a la queue des commandes"""
         if self.orientation_actuelle == 0:
             self.coord_actuelle[1]+=1
         elif self.orientation_actuelle == 1:
@@ -161,13 +175,8 @@ class IntelligenceRobot(Process):
 
         self.__queue_com.put(f'{self.__commandes["avancer"]} : 5')
 
-    #           fonction de base
-
     def orientation(self,p):
         self.orientation_actuelle = (self.orientation_actuelle + p ) % 4
-
-    
-
 
     def mise_en_position(self):
         if self.compteur_exploration == 1:
@@ -322,6 +331,8 @@ class IntelligenceRobot(Process):
     def premier_tour(self):
         self.avancer()
         while self.coord_actuelle != self.coord_init :
+            if self.__break:
+                break
             time.sleep(0.1)
             # self.__queue_com.put(f'{self.__commandes["lidarMesure"]} : 0')
             # data = self.__queue_com.get(block=True, timeout=None)
@@ -343,6 +354,8 @@ class IntelligenceRobot(Process):
     def deuxieme_tour(self):
         coord_utile=[0,0]
         for i in range((self.taille_map-2)//self.distance_decalage-1):
+            if self.__break:
+                break
             time.sleep(0.1)
             coord_utile=self.mise_en_position()
             self.exploration_allez(coord_utile)
