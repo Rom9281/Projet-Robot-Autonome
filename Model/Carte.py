@@ -1,3 +1,7 @@
+"""
+Modele abstrait d'une carte
+"""
+
 from calendar import c
 from Model.Peripherique import Peripherique
 

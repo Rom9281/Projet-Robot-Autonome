@@ -1,5 +1,11 @@
 
-from sympy import N
+"""
+
+Model du haut parleur
+
+Fares Zaghouane
+
+"""
 from Model.PeripheriqueCarte import PeripheriqueCarte
 from Model.Carte import Carte
 

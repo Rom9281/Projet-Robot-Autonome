@@ -1,4 +1,8 @@
+"""
+Modele de la LED
 
+Fares Zaghouane
+"""
 from Model.PeripheriqueCarte import PeripheriqueCarte
 from Model.Carte import Carte
 
