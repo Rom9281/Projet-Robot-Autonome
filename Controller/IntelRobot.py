@@ -57,7 +57,6 @@ class IntelligenceRobot(Process):
         self.__sem_start.release() # Permet d'attendre la fin du chargement du lancement principal
 
         self.premier_tour()
-
         self.deuxieme_tour()
 
             
@@ -99,9 +98,14 @@ class IntelligenceRobot(Process):
                 #         ret = True
                 #         #maj_avant_d()   
                 if ( 146 <= tuple[1] < 214):
-                    ret = True
+                    if tuple[2]<= self.distance_min:
+                        ret = True
                     break
         return ret
+
+    
+    def verification(self):
+        pass
 
 
     def obstacle_droite (self,message) :
@@ -329,6 +333,7 @@ class IntelligenceRobot(Process):
     #     return
 
     def premier_tour(self):
+        self.verification()
         self.avancer()
         while self.coord_actuelle != self.coord_init :
             if self.__break:

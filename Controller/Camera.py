@@ -8,7 +8,7 @@ Groupe B1
 Romain GAUD, Fares Zaghouane, Hugo Rodriguez
 """
 
-##Bibliothèques
+# Bibliothèques
 import cv2 ,numpy as np,matplotlib.pyplot as plt,signal,os, math,json, time
 from multiprocessing import Process
 
@@ -34,7 +34,6 @@ class Camera(Process):
         self.green_seuil = 150
         self.blue_seuil = 100
         self.liste_THRESH_BINARY=[cv2.THRESH_BINARY,cv2.THRESH_BINARY_INV,cv2.THRESH_BINARY]
-
         self.__etape = 1
     
     def run(self):
@@ -73,7 +72,6 @@ class Camera(Process):
                             self.__queue_commande.put(f'{self.__commandes["p_rot_hor_gauche"]}:0')
                     else:
                         self.__etape = 3
-
                 elif self.__etape == 3:
                     # envoyer la commande en degree
                     self.__queue_commande.put(f'{self.__commandes["rotation_verticale"]}:{180-degre}')

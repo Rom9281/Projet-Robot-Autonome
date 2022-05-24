@@ -81,7 +81,7 @@ class Lidar(Peripherique):
 
         return clean_data
     
-    """
+"""
     Permet de gerer l'interruption du programme LidarIntel
     
     def signal_handler(self,signum,frame):
