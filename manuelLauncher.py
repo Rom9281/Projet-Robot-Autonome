@@ -23,9 +23,9 @@ def robotController( action, param):
 
 def envoyerCommande(ser, commande, param1, param2):
     message = f"{commande} : {param1} : {param2}\r\n"
-    # print(ser.write(message.encode()))
+    print(ser.write(message.encode()))
     print(message)
-    # validation = ser.readline().decode()
+    validation = ser.readline().decode()
     validation = f"{commande} : ok"
     time.sleep(0.5)
     return validation
@@ -33,9 +33,9 @@ def envoyerCommande(ser, commande, param1, param2):
 
 def gestionUltrason(ser, commande):
     validation = envoyerCommande(ser, "USNDST", commande, 0)
-    # print(ser.readline().decode())
+    print(ser.readline().decode())
     if (validation.split()[-1] == "ok"):
-        # distance = ser.redline().decode()
+        distance = ser.redline().decode()
         distance = "AR : 20"
         distance = distance.split()[-1] # on ne garde que la valeur
     return validation , distance
@@ -52,7 +52,7 @@ def CommandesManuellesRobot(commande, param):
     if commande == "start":
         start = True
         
-        # ser = serial.Serial("/dev/ttyUSB0",19200)
+        ser = serial.Serial("/dev/ttyUSB0",19200)
         print("Loaded")
 
     if start:
@@ -88,3 +88,4 @@ def CommandesManuellesRobot(commande, param):
                 validation["validation"] = envoyerCommande(ser, "PSTSRV", 0, positionH)
 
     return validation
+

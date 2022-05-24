@@ -73,32 +73,30 @@ class CorpsRobot(Process):
         print("ultrason connecté")
         
         # camera
-        self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
-        print('Camera demaré')
+        #self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
+        #print('Camera demaré')
 
     
     def run(self):
-        signal.signal(signal.SIGTERM, self.signal_handler) # Definition du signal d'arret
-
+        
         print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid())) 
 
         self.__sem_start.release() # Permet au processus père de commencer
-        self.camera.start()
+        #self.camera.start()
         while self.__flag:
 
             # Lecture des commandes
             print( "en attente d'un commande")
-            commande = self.__queue_com.get(block=True, timeout=10) # La commande n'a aucun timeout
+            commande = False
+            #commande = self.__queue_com.get(block=True, timeout=10) # La commande n'a aucun timeout
             
             if  (commande == "STOP"):
                 self.signal_handler()
                 break
 
-            self.gererCommande(commande)
+            #self.gererCommande(commande)
 
             self.__sem_start.release()
-
-            print(self.__lidar.envoyerMesures())
 
             # Lecture des données
             # print(self.__lidar.getMeasure())

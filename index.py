@@ -187,7 +187,7 @@ def cleanData(data):
 
 
 def get_data():
-    lidar = rplidar.RPLidar('COM8', baudrate=115200)
+    lidar = rplidar.RPLidar('ttyUSB0', baudrate=115200)
     for scan in lidar.iter_scans(max_buf_meas=500):
         break
     lidar.stop()

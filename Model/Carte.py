@@ -57,6 +57,8 @@ class Carte(Peripherique):
     def valider(self,commande) -> bool:
         read = self.lireCommande() # On lit la commande
         liste = read.split() # on parse la liste 
+        
+        print(liste)
 
         return (liste[0]==commande) & (liste[-1]=="ok")
 

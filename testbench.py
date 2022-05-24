@@ -1,113 +1,81 @@
 
 
-# import serial
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import random, math, time
+import serial
+import matplotlib.pyplot as plt
+import numpy as np
+import random, math, time
 
-# import keyboard
+import keyboard
 
-
-
-
-# def envoyerCommande(ser, commande, param1, param2):
-#     message = f"{commande} : {param1} : {param2}\r\n"
-#     print(ser.write(message.encode()))
-#     print(message)
-#     time.sleep(0.5)
-#     return 0
+def envoyerCommande(ser, commande, param1, param2):
+    message = f"{commande} : {param1} : {param2}\r\n"
+    print(ser.write(message.encode()))
+    print(message)
+    time.sleep(0.5)
+    return 0
 
   
-# def gestionUltrason(commande):
-#     envoyerCommande(ser, "USNDST", commande, 0)
-#     # print(ser.readline().decode())
+def gestionUltrason(commande):
+    envoyerCommande(ser, "USNDST", commande, 0)
+    print(ser.readline().decode())
 
 
+def gestionRobot(action, param):
+    positionH = 0
+    positionV = 0
+    ser = 10
+    ser = serial.Serial("/dev/ttyUSB0",19200)
+    print("Loaded")
+    # ser.readline()
+    while 1:
 
+        # #deplacement du robot
+        if keyboard.is_pressed("z"):
+            envoyerCommande(ser, "MVMTR", 0, 10)
 
+        elif  keyboard.is_pressed("q"):
+            envoyerCommande(ser, "MVMTR", 2, 10)
 
+        elif  keyboard.is_pressed("s"):
+            envoyerCommande(ser, "MVMTR", 3, 10)
 
-# def gestionRobot(action, param):
-#     positionH = 0
-#     positionV = 0
-#     ser = 10
-#     ser = serial.Serial("/dev/ttyUSB0",19200)
-#     print("Loaded")
-#     # ser.readline()
-#     while 1:
+        elif  keyboard.is_pressed("d"):
+            envoyerCommande(ser, "MVMTR", 1, 10)
 
-#         # #deplacement du robot
-#         if keyboard.is_pressed("z"):
-#             envoyerCommande(ser, "MVMTR", 0, 10)
-
-#         elif  keyboard.is_pressed("q"):
-#             envoyerCommande(ser, "MVMTR", 2, 10)
-
-#         elif  keyboard.is_pressed("s"):
-#             envoyerCommande(ser, "MVMTR", 3, 10)
-
-#         elif  keyboard.is_pressed("d"):
-#             envoyerCommande(ser, "MVMTR", 1, 10)
-
-#         # # visé plus tire
-#         elif  keyboard.is_pressed("o"):
-#             positionV = (positionV + 10) % 180
-#             envoyerCommande(ser, "PSTSRV", 1, positionV)
+        # # visé plus tire
+        elif  keyboard.is_pressed("o"):
+            positionV = (positionV + 10) % 180
+            envoyerCommande(ser, "PSTSRV", 1, positionV)
         
-#         elif  keyboard.is_pressed("k"):
-#             positionH = (positionH + 10) % 180
-#             envoyerCommande(ser, "PSTSRV", 0, positionH)
+        elif  keyboard.is_pressed("k"):
+            positionH = (positionH + 10) % 180
+            envoyerCommande(ser, "PSTSRV", 0, positionH)
         
-#         elif  keyboard.is_pressed("l"):
-#             positionV = (positionV - 10) % 180
-#             envoyerCommande(ser, "PSTSRV", 1, positionV)
+        elif  keyboard.is_pressed("l"):
+            positionV = (positionV - 10) % 180
+            envoyerCommande(ser, "PSTSRV", 1, positionV)
 
-#         elif  keyboard.is_pressed("m"):
-#             positionH = (positionH - 10) % 180
-#             envoyerCommande(ser, "PSTSRV", 0, positionH)
+        elif  keyboard.is_pressed("m"):
+            positionH = (positionH - 10) % 180
+            envoyerCommande(ser, "PSTSRV", 0, positionH)
         
-#         elif  keyboard.is_pressed("t"):
+        elif  keyboard.is_pressed("t"):
 
-#             envoyerCommande(ser, "TIRLMP", 0, 0)
+            envoyerCommande(ser, "TIRLMP", 0, 0)
 
-#         elif keyboard.is_pressed("c"):
-#             envoyerCommande(ser, "HAPRDR", 0, 0)    
+        elif keyboard.is_pressed("c"):
+            envoyerCommande(ser, "HAPRDR", 0, 0)    
             
 
-#         # # demande information ultrason
+        # # demande information ultrason
 
-#         elif  keyboard.is_pressed("a"):
-#             gestionUltrason(0)
+        elif  keyboard.is_pressed("a"):
+            gestionUltrason(0)
 
-#         elif  keyboard.is_pressed("r"):
-#             gestionUltrason(1)
+        elif  keyboard.is_pressed("r"):
+            gestionUltrason(1)
         
-#         elif keyboard.is_pressed("n"):
-#             break
+        elif keyboard.is_pressed("n"):
+            break
 
-import random
-ori , orientation_actuelle = 0,0
-def orientation(p):
-    global orientation_actuelle
-    if orientation_actuelle==3 and p==1:
-       orientation_actuelle = 0
-    elif orientation_actuelle==0 and p==-1:
-        orientation_actuelle = 3
-    else :
-        orientation_actuelle += p
-
-    print(orientation_actuelle)
-
-def orientationOK(p):
-    global ori
-    ori = (ori + p) % 4
-    print( ori)
-    print('\n\n')
-
-
-for i in range (10):
-    deviation = random.choice([-1, 1])
-    orientation(deviation)
-    orientationOK(deviation)
-
-
+gestionRobot()
