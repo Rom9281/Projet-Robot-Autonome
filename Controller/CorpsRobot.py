@@ -74,8 +74,7 @@ class CorpsRobot(Process):
         # camera
         self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
         print('Camera demaré')
-
-
+        
     
     def run(self):
         signal.signal(signal.SIGTERM, self.signal_handler) # Definition du signal d'arret

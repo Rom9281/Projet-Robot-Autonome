@@ -45,6 +45,7 @@ class IntelligenceRobot(Process):
         self.map=np.zeros((self.taille_map,self.taille_map)) 
         self.map[0][1]=1
         self.map[1][0]=1
+
         self.lidar = Lidar()
     
     
@@ -60,7 +61,7 @@ class IntelligenceRobot(Process):
         self.premier_tour()
         self.deuxieme_tour()
 
-            
+
     
     def signal_handler(self,signum,frame):
         """ Methode pour arreter le processus"""
@@ -104,10 +105,6 @@ class IntelligenceRobot(Process):
                     break
         return ret
 
-    
-    def verification(self):
-        pass
-
 
     def obstacle_droite (self,message) :
         """Detection d'un obstacle a gauche"""
@@ -150,8 +147,9 @@ class IntelligenceRobot(Process):
                 #         ret = True
                 #         #maj_gauche_d() 
                 if ( 80 <= tuple[1] < 146):
-                    ret = True
-                    break
+                    if tuple[2]<= self.distance_min:
+                        ret = True
+                        break
         return ret
     
 
@@ -226,8 +224,7 @@ class IntelligenceRobot(Process):
                     if k>kmin:
                         kmin=k
         return(kmin)
-                                    
-
+    
 
     def maj_obstacle_gauche(self):
         if self.orientation_actuelle == 0:
@@ -320,7 +317,7 @@ class IntelligenceRobot(Process):
         return
 
     def premier_tour(self):
-        self.verification()
+        self.verification() # permet de verifier la presence du lidar
         self.avancer()
         while self.coord_actuelle != self.coord_init :
             time.sleep(0.1)
