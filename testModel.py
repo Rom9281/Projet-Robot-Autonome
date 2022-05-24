@@ -15,5 +15,19 @@ if __name__ == "__main__":
 
     sem_start = mp.Semaphore(0)
 
-    testCamera = CorpsRobot(queue_commande, queue_info, sem_start)
-    testCamera.run()
+    testCamera = Camera(queue_commande, queue_info, sem_start)
+    testCorp = CorpsRobot(queue_commande, queue_info, sem_start)
+    testIntel = IntelligenceRobot(queue_commande, queue_info, sem_start)
+    
+    Cam = mp.Process(target=testCamera.run() )
+    Corp = mp.Process(target=testCamera.run())
+    Intel = mp.Process(target=testIntel.run())
+
+
+    Cam.start()
+    Corp.start()
+    Intel.start()
+
+    Cam.join()
+    Corp.join()
+    Intel.join()

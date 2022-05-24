@@ -23,7 +23,7 @@ def robotController( action, param):
 
 def envoyerCommande(ser, commande, param1, param2):
     message = f"{commande} : {param1} : {param2}\r\n"
-    # print(ser.write(message.encode()))
+    print(ser.write(message.encode()))
     print(message)
     # validation = ser.readline().decode()
     validation = f"{commande} : ok"
@@ -33,26 +33,29 @@ def envoyerCommande(ser, commande, param1, param2):
 
 def gestionUltrason(ser, commande):
     validation = envoyerCommande(ser, "USNDST", commande, 0)
+    distance  = 0
     # print(ser.readline().decode())
-    if (validation.split()[-1] == "ok"):
-        # distance = ser.redline().decode()
-        distance = "AR : 20"
-        distance = distance.split()[-1] # on ne garde que la valeur
+    # if (validation.split()[-1] == "ok"):
+    #     distance = ser.redline().decode()
+    #     distance = ser.redline().decode()
+    
+    #     distance = distance.split()[-1] # on ne garde que la valeur
+    print(distance)
     return validation , distance
 
 
 start = False
 positionH = 0
 positionV = 0
-ser = 0
+ser = serial.Serial("COM7",19200)
 
-def CommandesManuellesRobot(commande, param):
+def CommandesManuellesRobot(commande, param, param2 = 10):
     global start, positionH, positionV, ser
     validation = {"validation": ""}
+    
     if commande == "start":
         start = True
         
-        # ser = serial.Serial("/dev/ttyUSB0",19200)
         print("Loaded")
 
     if start:
@@ -68,7 +71,7 @@ def CommandesManuellesRobot(commande, param):
             validation["validation"] = envoyerCommande(ser, commande=commande, param1=param, param2 = 0)
 
         elif (commande == "MVMTR"):
-            validation["validation"] = envoyerCommande(ser, commande=commande, param1=param, param2 = 10)
+            validation["validation"] = envoyerCommande(ser, commande=commande, param1=param, param2 = param2)
             
         elif (commande == "PSTSRV"):
             if  param == "0":

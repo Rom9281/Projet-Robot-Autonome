@@ -60,7 +60,7 @@ class Camera(Process):
                     else:
                         # Coder la rotation normale pour detecter le cercle
                         self.__queue_commande.put(f'{self.__commandes["automatique"]}:0')
-                        # print( "automatique")
+                        print( "automatique")
 
                 elif self.__etape == 2:
                     if pas_centre:

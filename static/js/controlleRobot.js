@@ -123,7 +123,7 @@ window.addEventListener("keydown", (event) => {
             break;
     
         case "q":
-            gauche();
+            rotGauche();
             break;
     
         case "s":
@@ -131,7 +131,7 @@ window.addEventListener("keydown", (event) => {
             break;
     
         case "d":
-            droite();
+            rotDroite();
             break;
 
         //  vise 
@@ -140,7 +140,7 @@ window.addEventListener("keydown", (event) => {
             break;
 
         case "k":
-            rotGauche();
+            gauche();
             break;
 
         case "l":
@@ -148,7 +148,7 @@ window.addEventListener("keydown", (event) => {
             break;
 
         case "m":
-            rotDroite();
+            droite();
             break;
 
         // gestion Lampe

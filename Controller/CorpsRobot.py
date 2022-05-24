@@ -72,8 +72,8 @@ class CorpsRobot(Process):
         print("ultrason connecté")
         
         # camera
-        self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
-        print('Camera demaré')
+        # self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
+        # print('Camera demaré')
         
     
     def run(self):

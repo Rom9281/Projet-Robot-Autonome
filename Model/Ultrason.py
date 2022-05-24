@@ -14,7 +14,7 @@ class Ultrason(PeripheriqueCarte):
         self._carte.ecrireCommand(self.creerCommande())
         valideAction = self.validationCommande()
         if (valideAction):
-            mesureDistance = self._carte.lireCommande
+            mesureDistance = self._carte.lireCommande()
             if (mesureDistance != ""):
                 self.distance = int(mesureDistance.split()[-1])
 

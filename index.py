@@ -24,6 +24,7 @@ app.register_blueprint(automaticLauncher, url_prefix="/controller")
 
 
 
+
 @app.route("/")
 def index():
 	# return the rendered template
@@ -187,8 +188,8 @@ def cleanData(data):
 
 
 def get_data():
-    lidar = rplidar.RPLidar('COM8', baudrate=115200)
-    for scan in lidar.iter_scans(max_buf_meas=500):
+    lidar = rplidar.RPLidar("COM8")
+    for scan in lidar.iter_scans():
         break
     lidar.stop()
     return scan
@@ -200,7 +201,7 @@ def lidarScan():
     i = 0
     
     while True:
-        if(i%7==0):
+        if(i % 2 == 0):
             x = []
             y = []
         current_data=get_data()
@@ -232,7 +233,9 @@ def lidarScan():
 if __name__ == '__main__':
 	# start the flask app
 	app.run( debug=True,
-		threaded=True, use_reloader=False)
+		threaded=True, 
+        use_reloader=False,
+        host = "0.0.0.0")
 # release the video stream pointer
 
 

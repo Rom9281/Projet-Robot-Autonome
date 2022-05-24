@@ -317,7 +317,6 @@ class IntelligenceRobot(Process):
         return
 
     def premier_tour(self):
-        self.verification() # permet de verifier la presence du lidar
         self.avancer()
         while self.coord_actuelle != self.coord_init :
             time.sleep(0.1)
