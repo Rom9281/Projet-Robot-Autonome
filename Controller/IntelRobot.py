@@ -45,6 +45,7 @@ class IntelligenceRobot(Process):
         self.map=np.zeros((self.taille_map,self.taille_map)) 
         self.map[0][1]=1
         self.map[1][0]=1
+        self.lidar = Lidar()
     
     
     def run(self):
@@ -154,12 +155,14 @@ class IntelligenceRobot(Process):
         """ Methode permettant d'ajouter la commande tourner a droite a la queue des commandes"""
         self.orientation(1)
         self.__queue_com.put(f'{self.__commandes["tourner_droite"]}:90')
+        print("virage droite : 90")
 
 
     def virage_gauche(self):
         """ Methode permettant d'ajouter la commande tourner a gauche a la queue des commandes"""
         self.orientation(-1)
         self.__queue_com.put(f'{self.__commandes["tourner_gauche"]} : 90')
+        print("virage gauche : 90")
 
 
     def avancer(self):
@@ -174,6 +177,7 @@ class IntelligenceRobot(Process):
             self.coord_actuelle[0]-=1
 
         self.__queue_com.put(f'{self.__commandes["avancer"]} : 5')
+        print("avancer : 5")
 
     def orientation(self,p):
         self.orientation_actuelle = (self.orientation_actuelle + p ) % 4
@@ -311,36 +315,14 @@ class IntelligenceRobot(Process):
             self.avancer()
         return
 
-    # def premier_tour(self):
-    #     self.avancer()
-    #     while self.coord_actuelle != self.coord_init :
-    #         time.sleep(0.1)
-    #         if self.obstacle_gauche():
-    #             self.maj_obstacle_gauche()
-    #             if self.obstacle_avant():
-    #                 self.maj_obstacle_avant()
-    #                 self.virage_droite()
-    #             else :
-    #                 self.avancer()
-    #         else:
-    #             self.virage_gauche()
-
-    #     self.taille_map=self.fond()
-    #     return
-
     def premier_tour(self):
         self.avancer()
         while self.coord_actuelle != self.coord_init :
-            if self.__break:
-                break
             time.sleep(0.1)
-            # self.__queue_com.put(f'{self.__commandes["lidarMesure"]} : 0')
-            # data = self.__queue_com.get(block=True, timeout=None)
-            data = self.lidar.__recupererMesures()
-            obstGauche, obstAvant, obstDroite = self.obstacle(data)
-            if obstGauche:
+            data = self.lidar.recupererMesures()
+            if self.obstacle_gauche(data):
                 self.maj_obstacle_gauche()
-                if obstAvant:
+                if self.obstacle_avant(data):
                     self.maj_obstacle_avant()
                     self.virage_droite()
                 else :
@@ -349,7 +331,30 @@ class IntelligenceRobot(Process):
                 self.virage_gauche()
 
         self.taille_map=self.fond()
-        return 
+        return
+
+    # def premier_tour(self):
+    #     self.avancer()
+    #     while self.coord_actuelle != self.coord_init :
+    #         if self.__break:
+    #             break
+    #         time.sleep(0.1)
+    #         # self.__queue_com.put(f'{self.__commandes["lidarMesure"]} : 0')
+    #         # data = self.__queue_com.get(block=True, timeout=None)
+    #         data = self.lidar.recupererMesures()
+    #         obstGauche, obstAvant, obstDroite = self.obstacle(data)
+    #         if obstGauche:
+    #             self.maj_obstacle_gauche()
+    #             if obstAvant:
+    #                 self.maj_obstacle_avant()
+    #                 self.virage_droite()
+    #             else :
+    #                 self.avancer()
+    #         else:
+    #             self.virage_gauche()
+
+    #     self.taille_map=self.fond()
+    #     return 
 
     def deuxieme_tour(self):
         coord_utile=[0,0]

@@ -26,8 +26,8 @@ class Camera(Process):
         # Configuration des commandes
         self.__config_commandes_path = "./Controller/commandes.json"
         self.__commandes = json.load(open(self.__config_commandes_path)) # récupère la config des périphériques dans le json
-
-        self.cap = cv2.VideoCapture(0) #1+ cv2.CAP_DSHOW
+        cv2.destroyAllWindows()
+        self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) #1+ cv2.CAP_DSHOW
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.out = cv2.VideoWriter('output.avi',self.fourcc, 25.0, (640,480))
         self.red_seuil = 150
@@ -50,7 +50,7 @@ class Camera(Process):
             ret, frame = self.cap.read()
 
             if ret == True:
-                frame = cv2.flip(frame,1)
+                self.frame = cv2.flip(frame,1)
                 self.out.write(frame)
                 cercle_trouve,pas_centre,direction,degre = self.detection_cercle_color(frame,self.red_seuil,self.green_seuil,self.blue_seuil,self.liste_THRESH_BINARY)
 
@@ -61,6 +61,7 @@ class Camera(Process):
                     else:
                         # Coder la rotation normale pour detecter le cercle
                         self.__queue_commande.put(f'{self.__commandes["automatique"]}:0')
+                        # print( "automatique")
 
                 elif self.__etape == 2:
                     if pas_centre:
@@ -69,14 +70,17 @@ class Camera(Process):
                         if direction:
                             # le cerlcle est a droite
                             self.__queue_commande.put(f'{self.__commandes["p_rot_hor_droite"]}:0')
+                            print("p_rot_hor_droite")
                         else:
                             self.__queue_commande.put(f'{self.__commandes["p_rot_hor_gauche"]}:0')
+                            print("p_rot_hor_gauche")
                     else:
                         self.__etape = 3
 
                 elif self.__etape == 3:
                     # envoyer la commande en degree
                     self.__queue_commande.put(f'{self.__commandes["rotation_verticale"]}:{180-degre}')
+                    print(f"rotation_verticale : {180-degre}")
                     self.__etape = 1
                     
             else:
@@ -205,12 +209,12 @@ class Camera(Process):
         ret,image_green_seuil = cv2.threshold(image_green,green_seuil,255,liste_THRESH_BINARY[1]) #Tresh_Binary_Inv, il faut être plus petit que le seuil pour mettre à 255 (en blanc)
         ret,image_blue_seuil = cv2.threshold(image_blue,blue_seuil,255,liste_THRESH_BINARY[2])
         
-        image_seuil = self.reconstruction_seuil_v2(image_red_seuil,image_green_seuil,image_blue_seuil)   
+        self.image_seuil = self.reconstruction_seuil_v2(image_red_seuil,image_green_seuil,image_blue_seuil)   
         kernel = np.ones((10, 10), np.uint8)
-        image_seuil = cv2.morphologyEx(image_seuil, cv2.MORPH_CLOSE, kernel)
-        image_seuil = cv2.morphologyEx(image_seuil, cv2.MORPH_OPEN, kernel)
+        self.image_seuil = cv2.morphologyEx(self.image_seuil, cv2.MORPH_CLOSE, kernel)
+        self.image_seuil = cv2.morphologyEx(self.image_seuil, cv2.MORPH_OPEN, kernel)
         
-        contours, hierarchy = cv2.findContours(image_seuil, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(self.image_seuil, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         frame_contours = self.frame.copy()
         cv2.drawContours(frame_contours,contours,-1,(128,255,128),3)
         
@@ -223,12 +227,12 @@ class Camera(Process):
         
         if (len(contours) != 0):
             for c in contours:
-                if self.Est_un_cercle(c,image_seuil,seuil_circularite):
+                if self.Est_un_cercle(c,self.image_seuil,seuil_circularite):
                     new_contours.append(c)
                     cercle_trouve = True
-                    icentre,jcentre=self.centre_cercle(c,image_seuil)
-                    Pas_centre,direction = self.Est_centre(icentre,image_seuil)
-                    degre = self.nombre_de_degre(jcentre,image_seuil)
+                    icentre,jcentre=self.centre_cercle(c,self.image_seuil)
+                    Pas_centre,direction = self.Est_centre(icentre,self.image_seuil)
+                    degre = self.nombre_de_degre(jcentre,self.image_seuil)
                     
         frame_cercle = self.frame.copy()
         cv2.drawContours(frame_cercle,new_contours,-1,(128,255,128),3)
