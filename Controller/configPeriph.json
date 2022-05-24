@@ -2,13 +2,13 @@
     "Lidar":
     {
         "Baud":19200,
-        "Pin":"COM8"
+        "Pin":"ttyUSB0"
     },
     
     "STM":
     {
         "Baud":19200,
-        "Pin":"COM7"
+        "Pin":"ttyUSB1"
     }
         
 }

@@ -22,6 +22,7 @@ from Model.LED import LED
 from Model.Lidar import Lidar
 from Model.Ultrason import Ultrason
 from Model.HautParleur import HautParleur
+import manuelLauncher
 
 class CorpsRobot(Process):
     """Processus gerant gloablement les membres du robot"""
@@ -74,7 +75,7 @@ class CorpsRobot(Process):
         # camera
         self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
         print('Camera demaré')
-        
+
     
     def run(self):
         signal.signal(signal.SIGTERM, self.signal_handler) # Definition du signal d'arret
@@ -87,7 +88,7 @@ class CorpsRobot(Process):
 
             # Lecture des commandes
             print( "en attente d'un commande")
-            commande = self.__queue_com.get(block=True, timeout=None) # La commande n'a aucun timeout
+            commande = self.__queue_com.get(block=True, timeout=10) # La commande n'a aucun timeout
             
             if  (commande == "STOP"):
                 self.signal_handler()
@@ -102,6 +103,28 @@ class CorpsRobot(Process):
             # Lecture des données
             # print(self.__lidar.getMeasure())
 
+            if self.__ultrasonAvant.recupererDistance():
+                if self.__ultrasonAvant.distance() < 50:
+                    self.__serializer.tournerDroite(90)
+                else:
+                    self.__serializer.avancer(10)
+
+            
+
+            ## envoi commande Ultrason
+            message = manuelLauncher.CommandesManuellesRobot("USNDST", 0)
+            validation = message["validation"]
+            distance = int(message["distance"])
+
+            if (distance <= 40  ):
+                manuelLauncher.CommandesManuellesRobot("MVMRT", 1, 90)
+            else:
+                manuelLauncher.CommandesManuellesRobot("MVMRT", 0, 10)
+
+
+
+            
+                    
             time.sleep(0.5)
 
         print("Je suis sorti de la boucle je me termine Corps")

@@ -58,7 +58,7 @@ def lauchAuto():
 
     flag = True
             
-    corps.start() # Commence le processus corps
+    corps.run() # Commence le processus corps
     intel.start() # idem intelligence
     camera.start()
 
