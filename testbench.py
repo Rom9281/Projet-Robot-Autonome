@@ -7,9 +7,12 @@ import random, math, time
 
 import keyboard
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 4eb1db6971bc719d3a169f00b172bcab55abf882
 def envoyerCommande(ser, commande, param1, param2):
     message = f"{commande} : {param1} : {param2}\r\n"
     print(ser.write(message.encode()))
@@ -87,3 +90,4 @@ while 1:
         break
 
 
+gestionRobot()

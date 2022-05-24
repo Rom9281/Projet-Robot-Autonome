@@ -25,7 +25,7 @@ def envoyerCommande(ser, commande, param1, param2):
     message = f"{commande} : {param1} : {param2}\r\n"
     print(ser.write(message.encode()))
     print(message)
-    # validation = ser.readline().decode()
+    validation = ser.readline().decode()
     validation = f"{commande} : ok"
     time.sleep(0.5)
     return validation
@@ -33,14 +33,11 @@ def envoyerCommande(ser, commande, param1, param2):
 
 def gestionUltrason(ser, commande):
     validation = envoyerCommande(ser, "USNDST", commande, 0)
-    distance  = 0
-    # print(ser.readline().decode())
-    # if (validation.split()[-1] == "ok"):
-    #     distance = ser.redline().decode()
-    #     distance = ser.redline().decode()
-    
-    #     distance = distance.split()[-1] # on ne garde que la valeur
-    print(distance)
+    print(ser.readline().decode())
+    if (validation.split()[-1] == "ok"):
+        distance = ser.redline().decode()
+        distance = "AR : 20"
+        distance = distance.split()[-1] # on ne garde que la valeur
     return validation , distance
 
 
@@ -56,6 +53,7 @@ def CommandesManuellesRobot(commande, param, param2 = 10):
     if commande == "start":
         start = True
         
+    
         print("Loaded")
 
     if start:
@@ -91,3 +89,4 @@ def CommandesManuellesRobot(commande, param, param2 = 10):
                 validation["validation"] = envoyerCommande(ser, "PSTSRV", 0, positionH)
 
     return validation
+

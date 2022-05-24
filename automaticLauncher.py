@@ -37,7 +37,7 @@ print('Corps demarrer')
 intel= IntelligenceRobot(queue_commande, queue_info,sem_start)
 print("Intelligence demarrer")
 # On ajoute le process de la camera
-camera = Camera(queue_commande, queue_info,sem_start)
+#camera = Camera(queue_commande, queue_info,sem_start)
 print('camera demarrer')
 @automaticLauncher.route("/auto/<action>")
 def robotAuto(action):
@@ -58,9 +58,9 @@ def lauchAuto():
 
     flag = True
             
-    corps.start() # Commence le processus corps
+    corps.run() # Commence le processus corps
     intel.start() # idem intelligence
-    camera.start()
+    #camera.start()
 
     # Attend l'initialisation des deux autres processus avant de passer des commandes
     sem_start.acquire()
@@ -134,9 +134,9 @@ def stopAuto():
     queue_commande.put("STOP")
     corps.terminate()
     intel.terminate()
-    camera.terminate()
+    #camera.terminate()
 
     corps.join()
     intel.join()
-    camera.join()
+    #camera.join()
     print("ENDED")
