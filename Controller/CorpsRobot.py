@@ -45,29 +45,35 @@ class CorpsRobot(Process):
 
         # On configure la carte a laquelle va être connecte les périphériques
         self.__stm = STM()
+        print( "STM connecté")
         
-        self.__lidar = Lidar()
 
         # On ajoute les elements connectés au stm32
         # Initialisation des ServoMoteur
         self.__servo_horizontal = ServoMoteur(self.__stm,0)
         self.__servo_vertical = ServoMoteur(self.__stm,1)
+        print("Servo moteur connectés")
 
         #Initialisation des Moteurs
         self.__serializer = Serializer(self.__stm)
+        print( "moteur connecté")
 
         # Initialisation de la Led
         self.__led = LED(self.__stm)
+        print( "led connecté")
 
         # Initialisation Haut Parleur
         self.__hautParleur = HautParleur(self.__stm)
+        print("haut parleur connecté")
 
         # Initialisation des Capteurs Ultrason
         self.__ultrasonAvant = Ultrason(self.__stm, position=0)
         self.__ultrasonArriere = Ultrason(self.__stm, position=1)
+        print("ultrason connecté")
         
         # camera
         self.camera = Camera(self.__queue_com, self.__queue_info, self.__sem_start)
+        print('Camera demaré')
 
 
     
@@ -77,11 +83,11 @@ class CorpsRobot(Process):
         print("[$] %s:%s : Corps actif"%(os.getppid(),os.getpid())) 
 
         self.__sem_start.release() # Permet au processus père de commencer
-
+        self.camera.start()
         while self.__flag:
 
             # Lecture des commandes
-
+            print( "en attente d'un commande")
             commande = self.__queue_com.get(block=True, timeout=None) # La commande n'a aucun timeout
             
             if  (commande == "STOP"):
@@ -106,9 +112,9 @@ class CorpsRobot(Process):
         commande = commande.split(":") # Traitement de la comande pour la rendre risible
         messageValidation = False
 
-        # lidar
-        if (commande[0] == self.commandes["lidarMesure"] ):
-            messageValidation = self.__lidar.__recupererMesures()
+        # # lidar
+        # if (commande[0] == self.commandes["lidarMesure"] ):
+        #     messageValidation = self.__lidar.__recupererMesures()
         # déplacements
         if(commande[0] == self.commandes["avancer"]):
             messageValidation = self.__serializer.avancer(commande[1])
@@ -184,6 +190,7 @@ class CorpsRobot(Process):
             print("[$]Erreur : Commande non connue")
 
         self.__queue_info.put(messageValidation)
+        print( f'message validation : {messageValidation}' )
 
         if ( ( commande[0] == self.commandes["mesureUltrasonAv"] or  
             commande[0] == self.commandes["mesureUltrasonAr"] ) and 

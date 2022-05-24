@@ -5,7 +5,7 @@ Maxime - Romain
 
 # Bibliothèques exterieurs
 import matplotlib.pyplot as plt, json, signal, os, time
-from rplidar import RPLidar
+import rplidar
 
 # Internes
 from Model.Peripherique import Peripherique
@@ -14,43 +14,34 @@ from Model.Peripherique import Peripherique
 class Lidar(Peripherique):
     def __init__(self):
         super(Lidar, self).__init__()
-
-        # self.__q_lidar = q_lidar # Queue donnant les informations du lidar
-
-        # # Configuration des commandes:
-        # self.__config_commandes_path = "./Controller/commandes.json"
-        # self.__comm = json.load(open(self.__config_commandes_path)) # récupère la config des periphériques dans le json
-
-        # self.__min_quality = 8 # Qualité minimum de la mesure persue
-
-        # self.__iter = 0
         self.__flag = True
-        self._serial = self._connect()
+        self._pin = "COM8"
+        self._connect()
         
     """
     Permet la connection au lidar en utilisant la bibliotheque
     Retourne un objet RPLidar ou None
     """
-    def _connect(self) -> RPLidar:
-        ret = None
+    def _connect(self) -> rplidar.RPLidar:
+   
 
         try:
-            ret = RPLidar(self._pin)
-            print(f"[$] Info Lidar : {self._getInfo()}")
-            print(f"[$] Santé Lidar : {self._getHealth()}")
-        except :
+            self._serial = rplidar.RPLidar(self._pin)
+            print(f"[$] Info Lidar : {self.getInfo()}")
+            print(f"[$] Santé Lidar : {self.getHealth()}")
+        except rplidar.RPLidarException:
             print("[$] Failed to connect to the Lidar")
 
-        return ret
+
     
-    def _getInfo(self):
+    def getInfo(self):
         return self._serial.get_info()
 
-    def _getHealth(self):
+    def getHealth(self):
         return self._serial.get_health()
     
-    def __recupererMesures(self) -> list:
-        for scan in self._serial.iter_scans(max_buf_meas=500):
+    def recupererMesures(self) -> list:
+        for scan in self._serial.iter_scans():
             break 
 
         return scan
@@ -64,7 +55,7 @@ class Lidar(Peripherique):
             try: 
                 t1 = time.time()
                 self.__flag = False
-                ret = self.__cleanData(self.__recupererMesures())
+                ret = self.__cleanData(self.recupererMesures())
                 ret = ':'.join(ret)
                 t2 = time.time()
                 print(f"Time : {t2-t1}")
