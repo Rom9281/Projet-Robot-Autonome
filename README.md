@@ -1,5 +1,8 @@
 # ProjetTransversal
 
+## Lien git
+
+https://github.com/Rom9281/ProjetTransversal.git
 
 ## Rappel sur les commandes : 
 Les différentes commandes sont les suivantes:
@@ -10,7 +13,6 @@ Pour avancer d'une certaine distance à une certaine allure
 ```
 mogo motorId:vel [motorId:vel]
 ```
-
 
 # Format envoi de commande 
 
